@@ -8,7 +8,7 @@ import java.util.TimeZone;
 
 public class Utils {
     public static final String API_KEY = "AIzaSyBsrViFNAWWmWs0tVJ5z221PfWlsNZa8OQ";
-    public static final String CHANNEL_ID = "UC4pcJpUBxP16H1AY1aUy6GA";
+    public static final String CHANNEL_ID = "UCJrOtniJ0-NWz37R30urifQ";
 
     public static final Date currentDate = Calendar.getInstance(TimeZone.getTimeZone("GMT+7")).getTime();
     public static Date RFC3339ToDate(String rfcTime){

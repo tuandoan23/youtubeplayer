@@ -60,6 +60,8 @@ public class MainActivity extends BaseActivity implements MainView{
     int visibleItemCount, totalItemCount, firstVisibleItem;
     private int previousTotal = 0;
     private int visibleThreshold = 1;
+    private int thisWeek = 0;
+    private int thisMonth = 0;
 
     private int verticalOffset;
     // Determines the scroll UP/DOWN offset
@@ -75,6 +77,12 @@ public class MainActivity extends BaseActivity implements MainView{
 
     @BindView(R.id.tvTotal)
     AppCompatTextView tvTotal;
+
+    @BindView(R.id.tvThisMonth)
+    AppCompatTextView tvThisMonth;
+
+    @BindView(R.id.tvThisWeek)
+    AppCompatTextView tvThisWeek;
 
     @BindView(R.id.tvChannelTitle)
     AppCompatTextView tvChannelTitle;
@@ -157,25 +165,8 @@ public class MainActivity extends BaseActivity implements MainView{
             this.items.addAll(items);
             videoAdapter.notifyDataSetChanged();
             setOnScrollListener(nextPageToken);
-            String timeString = items.get(0).getSnippet().getPublishedAt();
-            Date date = RFC3339ToDate(timeString);
-            LogUtils.d(RFC3339ToDate(timeString));
-            LogUtils.d(RFC3339ToDate1(timeString));
-
-            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-            Date dateOfOrder = new Date();
-            calendar.setTime(dateOfOrder);
-            Date date1 = calendar.getTime();
-            LogUtils.d(date1);
-            calendar.add(Calendar.MONTH,-9);
-            Date date2 = calendar.getTime();
-            LogUtils.d(date2);
-
-            if (date.compareTo(date2) > 0 && date.compareTo(date1) < 0){
-                LogUtils.d("In");
-            } else {
-                LogUtils.d("Out");
-            }
+            countThisWeek(items);
+            countThisMonth(items);
 //            rvListVideo.addOnScrollListener(new RecyclerView.OnScrollListener() {
 //                @Override
 //                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -229,6 +220,52 @@ public class MainActivity extends BaseActivity implements MainView{
 //                }
 //            });
         }
+    }
+
+    private void countThisWeek(ArrayList<Item> items) {
+        for (int i = 0; i < items.size(); i++) {
+            String timeString = items.get(i).getSnippet().getPublishedAt();
+            Date date = RFC3339ToDate(timeString);
+            LogUtils.d(RFC3339ToDate(timeString));
+
+            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+            Date dateOfOrder = new Date();
+            calendar.setTime(dateOfOrder);
+            Date dateCurrent = calendar.getTime();
+            LogUtils.d(dateCurrent);
+            calendar.add(Calendar.WEEK_OF_YEAR, -1);
+            Date dateOfAWeekAgo = calendar.getTime();
+            LogUtils.d(dateOfAWeekAgo);
+
+            if (date.compareTo(dateOfAWeekAgo) > 0 && date.compareTo(dateCurrent) < 0) {
+                LogUtils.d("In this Week");
+                thisWeek++;
+            }
+        }
+        tvThisWeek.setText(thisWeek + "");
+    }
+
+    private void countThisMonth(ArrayList<Item> items) {
+        for (int i = 0; i < items.size(); i++) {
+            String timeString = items.get(i).getSnippet().getPublishedAt();
+            Date date = RFC3339ToDate(timeString);
+            LogUtils.d(RFC3339ToDate(timeString));
+
+            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+            Date dateOfOrder = new Date();
+            calendar.setTime(dateOfOrder);
+            Date dateCurrent = calendar.getTime();
+            LogUtils.d(dateCurrent);
+            calendar.add(Calendar.MONTH, -1);
+            Date dateOfAMonthAgo = calendar.getTime();
+            LogUtils.d(dateOfAMonthAgo);
+
+            if (date.compareTo(dateOfAMonthAgo) > 0 && date.compareTo(dateCurrent) < 0) {
+                LogUtils.d("In this Month");
+                thisMonth++;
+            }
+        }
+        tvThisMonth.setText(thisMonth + "");
     }
 
 //    @TargetApi(Build.VERSION_CODES.LOLLIPOP)

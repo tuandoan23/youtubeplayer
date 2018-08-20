@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity"
     android:orientation="vertical">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:elevation="0dp">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:minHeight="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="165dp"
             android:background="@drawable/profile_gradient"
             android:gravity="center"
             app:layout_scrollFlags="scroll|enterAlways|snap">
@@ -18,111 +24,113 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="@drawable/profile_gradient"
-                android:gravity="center"
-                android:paddingTop="20dp">
+                android:background="@drawable/profile_gradient">
+                <!--Channel Icon-->
                 <com.facebook.drawee.view.SimpleDraweeView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
                     android:id="@+id/imgChannelIcon"
                     android:layout_gravity="center"
-                    app:roundAsCircle="true"/>
+                    app:roundAsCircle="true"
+                    android:layout_marginTop="10dp"/>
+                <!--Channel Title-->
                 <android.support.v7.widget.AppCompatTextView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:id="@+id/tvChannelTitle"
                     android:textStyle="bold"
-                    android:textSize="18dp"
-                    android:textColor="@color/default_text_color"/>
+                    android:textSize="20dp"
+                    android:textColor="@color/default_text_color"
+                    android:layout_marginTop="5dp"/>
+                <!--Statistics videos-->
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/default_text_color"
+                    android:orientation="horizontal"
+                    android:elevation="3dp"
+                    android:id="@+id/statistic"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="5dp">
+                    <!--tvTotal-->
+                    <android.support.v7.widget.LinearLayoutCompat
+                        android:layout_width="0dp"
+                        android:layout_weight="0.33"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+                        <android.support.v7.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tvTotal"
+                            android:gravity="center"
+                            android:textColor="@color/default_color"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <android.support.v7.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="Total"
+                            android:gravity="center"
+                            android:textColor="@color/grey_text"/>
+                    </android.support.v7.widget.LinearLayoutCompat>
+                    <!--tvThisMonth-->
+                    <android.support.v7.widget.LinearLayoutCompat
+                        android:layout_width="0dp"
+                        android:layout_weight="0.33"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+                        <android.support.v7.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tvThisMonth"
+                            android:gravity="center"
+                            android:textColor="@color/default_color"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <android.support.v7.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="This Month"
+                            android:gravity="center"
+                            android:textColor="@color/grey_text"/>
+                    </android.support.v7.widget.LinearLayoutCompat>
+                    <!--tvThisWeek-->
+                    <android.support.v7.widget.LinearLayoutCompat
+                        android:layout_width="0dp"
+                        android:layout_weight="0.33"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+                        <android.support.v7.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tvThisWeek"
+                            android:gravity="center"
+                            android:textColor="@color/default_color"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <android.support.v7.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="This Week"
+                            android:gravity="center"
+                            android:textColor="@color/grey_text"/>
+                    </android.support.v7.widget.LinearLayoutCompat>
+                </android.support.v7.widget.LinearLayoutCompat>
             </android.support.v7.widget.LinearLayoutCompat>
         </android.support.v7.widget.Toolbar>
-        <android.support.v7.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="-35dp"
-            android:background="@color/default_text_color"
-            android:orientation="horizontal"
-            android:elevation="5dp"
-            android:id="@+id/statistic">
-            <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="0dp"
-                android:layout_weight="0.33"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="12dp">
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvTotal"
-                    android:gravity="center"
-                    android:textColor="@color/default_color"
-                    android:textStyle="bold"
-                    android:text="20"
-                    android:textSize="20dp"/>
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Total"
-                    android:gravity="center"/>
-            </android.support.v7.widget.LinearLayoutCompat>
-            <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="0dp"
-                android:layout_weight="0.33"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="12dp">
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvThisMonth"
-                    android:gravity="center"
-                    android:textColor="@color/default_color"
-                    android:textStyle="bold"
-                    android:text="15"
-                    android:textSize="20dp"/>
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="This Month"
-                    android:gravity="center"/>
-            </android.support.v7.widget.LinearLayoutCompat>
-            <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="0dp"
-                android:layout_weight="0.33"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="12dp">
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvThisWeek"
-                    android:gravity="center"
-                    android:textColor="@color/default_color"
-                    android:textStyle="bold"
-                    android:text="07"
-                    android:textSize="20dp"/>
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="This Week"
-                    android:gravity="center"/>
-            </android.support.v7.widget.LinearLayoutCompat>
-        </android.support.v7.widget.LinearLayoutCompat>
-        <android.support.v7.widget.LinearLayoutCompat
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rvListVideo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbarStyle="insideOverlay"
-                android:scrollbars="vertical"
-                android:cacheColorHint="@android:color/transparent"
-                android:clipToPadding="false"/>
-        </android.support.v7.widget.LinearLayoutCompat>
-</android.support.v7.widget.LinearLayoutCompat>
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvListVideo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
+        android:background="#D2DADD"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+</android.support.design.widget.CoordinatorLayout>
