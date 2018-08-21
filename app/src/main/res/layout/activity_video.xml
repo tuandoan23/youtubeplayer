@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -9,25 +10,42 @@
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/toolbar">
-
+            android:id="@+id/toolbar"
+            android:background="@color/default_color"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+            app:titleTextColor="@color/default_text_color">
         </android.support.v7.widget.Toolbar>
-        <com.google.android.youtube.player.YouTubePlayerView
+        <fragment
+            android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+            android:id="@+id/playerFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/player">
-        </com.google.android.youtube.player.YouTubePlayerView>
+            android:layout_height="wrap_content"/>
         <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
-            <android.support.v7.widget.AppCompatTextView
+            android:padding="10dp">
+            <!--<android.support.v7.widget.AppCompatTextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/tvVideoTitle"-->
+                <!--android:textStyle="bold"-->
+                <!--android:textSize="15dp"/>-->
+            <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvVideoTitle"
-                android:textStyle="bold"
-                android:textSize="15dp"/>
+                android:orientation="horizontal">
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Uploaded by "/>
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/channelTitle"/>
+            </android.support.v7.widget.LinearLayoutCompat>
             <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,16 +61,16 @@
                     android:id="@+id/tvPublished"/>
             </android.support.v7.widget.LinearLayoutCompat>
 
-            <!--<android.support.v7.widget.AppCompatTextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Description"-->
-                <!--android:layout_marginTop="20dp"/>-->
-            <!--<android.support.v7.widget.AppCompatTextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:id="@+id/tvDescription"-->
-                <!--android:layout_marginTop="20dp"/>-->
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description:"
+                android:layout_marginTop="20dp"/>
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvDescription"
+                android:layout_marginTop="10dp"/>
         </android.support.v7.widget.LinearLayoutCompat>
     </android.support.v7.widget.LinearLayoutCompat>
-</android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

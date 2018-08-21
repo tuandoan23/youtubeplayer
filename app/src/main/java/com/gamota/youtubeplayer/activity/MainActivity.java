@@ -1,88 +1,69 @@
 package com.gamota.youtubeplayer.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Handler;
-import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.apkfuns.logutils.LogUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.gamota.youtubeplayer.OnLoadMoreListener;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.VideoAdapter;
 import com.gamota.youtubeplayer.base.BaseActivity;
 import com.gamota.youtubeplayer.model.Channel.ChannelInfo;
 import com.gamota.youtubeplayer.model.ListVideoModel.Item;
-import com.gamota.youtubeplayer.model.ListVideoModel.ListVideo;
 import com.gamota.youtubeplayer.presenter.MainViewPresenter;
 import com.gamota.youtubeplayer.presenteriplm.MainViewPresenterIplm;
 import com.gamota.youtubeplayer.view.MainView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import butterknife.BindView;
 
 import static com.gamota.youtubeplayer.utils.Utils.API_KEY;
 import static com.gamota.youtubeplayer.utils.Utils.CHANNEL_ID;
-import static com.gamota.youtubeplayer.utils.Utils.RFC3339ToDate;
-import static com.gamota.youtubeplayer.utils.Utils.RFC3339ToDate1;
 
 public class MainActivity extends BaseActivity implements MainView{
-    private static final float TOOLBAR_ELEVATION = 14f;
     private MainViewPresenter mainViewPresenter;
     private String nextPageToken = "";
     private VideoAdapter videoAdapter;
     private ArrayList<Item> items = new ArrayList<>();
-    private int total;
+    private long total = 0;
     private LinearLayoutManager linearLayoutManager;
     private boolean loading = true;
     int visibleItemCount, totalItemCount, firstVisibleItem;
     private int previousTotal = 0;
     private int visibleThreshold = 1;
-    private int thisWeek = 0;
-    private int thisMonth = 0;
-
-    private int verticalOffset;
-    // Determines the scroll UP/DOWN offset
-    private int scrollingOffset;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     @BindView(R.id.rvListVideo)
     RecyclerView rvListVideo;
+
     @BindView(R.id.statistic)
     LinearLayoutCompat statistic;
 
     @BindView(R.id.tvTotal)
     AppCompatTextView tvTotal;
 
-    @BindView(R.id.tvThisMonth)
-    AppCompatTextView tvThisMonth;
+    @BindView(R.id.tvSub)
+    AppCompatTextView tvSub;
 
-    @BindView(R.id.tvThisWeek)
-    AppCompatTextView tvThisWeek;
+    @BindView(R.id.tvView)
+    AppCompatTextView tvView;
 
     @BindView(R.id.tvChannelTitle)
     AppCompatTextView tvChannelTitle;
@@ -90,12 +71,21 @@ public class MainActivity extends BaseActivity implements MainView{
     @BindView(R.id.imgChannelIcon)
     SimpleDraweeView imgChannelIcon;
 
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+
     @Override
     public void getChannelInfoSuccess(ChannelInfo channelInfo) {
         if (!compositeDisposable.isDisposed()) {
             tvChannelTitle.setText(channelInfo.getSnippet().getTitle().toString());
             Uri uri = Uri.parse(channelInfo.getSnippet().getThumbnails().getDefault().getUrl().toString());
             imgChannelIcon.setImageURI(uri);
+            total = Long.parseLong(channelInfo.getStatistics().getVideoCount());
+            tvTotal.setText(format(total));
+            long sub = Long.parseLong(channelInfo.getStatistics().getSubscriberCount());
+            tvSub.setText(format(sub));
+            long view = Long.parseLong(channelInfo.getStatistics().getViewCount());
+            tvView.setText(format(view));
             mainViewPresenter.getListVideo(CHANNEL_ID, API_KEY, nextPageToken);
         }
     }
@@ -105,6 +95,31 @@ public class MainActivity extends BaseActivity implements MainView{
         if (!compositeDisposable.isDisposed()){
 
         }
+    }
+
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+    static {
+        suffixes.put(1_000L, "K");
+        suffixes.put(1_000_000L, "M");
+        suffixes.put(1_000_000_000L, "B");
+        suffixes.put(1_000_000_000_000L, "T");
+        suffixes.put(1_000_000_000_000_000L, "P");
+        suffixes.put(1_000_000_000_000_000_000L, "E");
+    }
+
+    public static String format(long value) {
+        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+        if (value == Long.MIN_VALUE) return format(Long.MIN_VALUE + 1);
+        if (value < 0) return "-" + format(-value);
+        if (value < 1000) return Long.toString(value); //deal with easy case
+
+        Map.Entry<Long, String> e = suffixes.floorEntry(value);
+        Long divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 
     @Override
@@ -129,6 +144,12 @@ public class MainActivity extends BaseActivity implements MainView{
         rvListVideo.setLayoutManager(linearLayoutManager);
         videoAdapter = new VideoAdapter(items, this);
         rvListVideo.setAdapter(videoAdapter);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rvListVideo.smoothScrollToPosition(0);
+            }
+        });
     }
 
     @Override
@@ -140,14 +161,12 @@ public class MainActivity extends BaseActivity implements MainView{
                 String videoId = intent.getStringExtra("videoId");
                 String videoTitle = intent.getStringExtra("videoTitle");
                 String published = intent.getStringExtra("published");
-                String description = intent.getStringExtra("description");
                 boolean isClicked = intent.getBooleanExtra("isClicked",false);
                 if (isClicked){
-                    Intent newIntent = new Intent(getApplicationContext(), VideoPlayerActivity.class );
+                    Intent newIntent = new Intent(getApplicationContext(), ContentVideoActivity.class );
                     newIntent.putExtra("videoId", videoId);
                     newIntent.putExtra("videoTitle", videoTitle);
                     newIntent.putExtra("published", published);
-                    newIntent.putExtra("description", description);
                     startActivity(newIntent);
                 }
             }
@@ -159,148 +178,18 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void getListVideoSuccess(ArrayList<Item> items, String nextPageToken, String totalResults) {
         if (!compositeDisposable.isDisposed()) {
-            tvTotal.setText(totalResults);
-            total = Integer.parseInt(totalResults);
+            ArrayList<Item> itemsVideo = new ArrayList<>();
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).getVideoId().getKind().compareTo("youtube#video") == 0) {
+                    itemsVideo.add(items.get(i));
+                }
+            }
             this.nextPageToken = nextPageToken;
-            this.items.addAll(items);
+            this.items.addAll(itemsVideo);
             videoAdapter.notifyDataSetChanged();
             setOnScrollListener(nextPageToken);
-            countThisWeek(items);
-            countThisMonth(items);
-//            rvListVideo.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//                @Override
-//                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//                        if (scrollingOffset > 0) {
-//                            if (verticalOffset > toolbar.getHeight()) {
-//                                toolbarAnimateHide();
-//                            } else {
-//                                toolbarAnimateShow(verticalOffset);
-//                            }
-//                        } else if (scrollingOffset < 0) {
-//                            if (toolbar.getTranslationY() < toolbar.getHeight() * -0.6 && verticalOffset > toolbar.getHeight()) {
-//                                toolbarAnimateHide();
-//                            } else {
-//                                toolbarAnimateShow(verticalOffset);
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                    verticalOffset = rvListVideo.computeVerticalScrollOffset();
-//                    scrollingOffset = dy;
-//                    int toolbarYOffset = (int) (dy - toolbar.getTranslationY());
-//                    toolbar.animate().cancel();
-//                    if (scrollingOffset > 0) {
-//                        if (toolbarYOffset < toolbar.getHeight()) {
-//                            if (verticalOffset > toolbar.getHeight()) {
-//                                toolbarSetElevation(TOOLBAR_ELEVATION);
-//                            }
-//                            toolbar.setTranslationY(-toolbarYOffset);
-//                        } else {
-//                            toolbarSetElevation(0);
-//                            toolbar.setTranslationY(-toolbar.getHeight());
-//                        }
-//                    } else if (scrollingOffset < 0) {
-//                        if (toolbarYOffset < 0) {
-//                            if (verticalOffset <= 0) {
-//                                toolbarSetElevation(0);
-//                            }
-//                            if (verticalOffset <= 0) toolbar
-//                                    .setTranslationY(0);
-//                        } else {
-//                            if (verticalOffset > toolbar.getHeight()) {
-//                                toolbarSetElevation(TOOLBAR_ELEVATION);
-//                            }
-//                            toolbar.setTranslationY(-toolbarYOffset);
-//                        }
-//                    }
-//                }
-//            });
         }
     }
-
-    private void countThisWeek(ArrayList<Item> items) {
-        for (int i = 0; i < items.size(); i++) {
-            String timeString = items.get(i).getSnippet().getPublishedAt();
-            Date date = RFC3339ToDate(timeString);
-            LogUtils.d(RFC3339ToDate(timeString));
-
-            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-            Date dateOfOrder = new Date();
-            calendar.setTime(dateOfOrder);
-            Date dateCurrent = calendar.getTime();
-            LogUtils.d(dateCurrent);
-            calendar.add(Calendar.WEEK_OF_YEAR, -1);
-            Date dateOfAWeekAgo = calendar.getTime();
-            LogUtils.d(dateOfAWeekAgo);
-
-            if (date.compareTo(dateOfAWeekAgo) > 0 && date.compareTo(dateCurrent) < 0) {
-                LogUtils.d("In this Week");
-                thisWeek++;
-            }
-        }
-        tvThisWeek.setText(thisWeek + "");
-    }
-
-    private void countThisMonth(ArrayList<Item> items) {
-        for (int i = 0; i < items.size(); i++) {
-            String timeString = items.get(i).getSnippet().getPublishedAt();
-            Date date = RFC3339ToDate(timeString);
-            LogUtils.d(RFC3339ToDate(timeString));
-
-            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-            Date dateOfOrder = new Date();
-            calendar.setTime(dateOfOrder);
-            Date dateCurrent = calendar.getTime();
-            LogUtils.d(dateCurrent);
-            calendar.add(Calendar.MONTH, -1);
-            Date dateOfAMonthAgo = calendar.getTime();
-            LogUtils.d(dateOfAMonthAgo);
-
-            if (date.compareTo(dateOfAMonthAgo) > 0 && date.compareTo(dateCurrent) < 0) {
-                LogUtils.d("In this Month");
-                thisMonth++;
-            }
-        }
-        tvThisMonth.setText(thisMonth + "");
-    }
-
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//    private void toolbarSetElevation(float elevation) {
-//        // setElevation() only works on Lollipop
-////        if (AndroidUtils.isLollipop()) {
-//            toolbar.setElevation(elevation);
-////        }
-//    }
-
-//    private void toolbarAnimateShow(final int verticalOffset) {
-//        toolbar.animate()
-//                .translationY(0)
-//                .setInterpolator(new LinearInterpolator())
-//                .setDuration(180)
-//                .setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationStart(Animator animation) {
-//                        toolbarSetElevation(verticalOffset == 0 ? 0 : TOOLBAR_ELEVATION);
-//                    }
-//                });
-//    }
-
-//    private void toolbarAnimateHide() {
-//        toolbar.animate()
-//                .translationY(-toolbar.getHeight())
-//                .setInterpolator(new LinearInterpolator())
-//                .setDuration(180)
-//                .setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        toolbarSetElevation(0);
-//                    }
-//                });
-//    }
 
     private void setOnScrollListener(String nextPageToken) {
         rvListVideo.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -308,11 +197,14 @@ public class MainActivity extends BaseActivity implements MainView{
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 visibleItemCount = rvListVideo.getChildCount();
                 totalItemCount = linearLayoutManager.getItemCount();
                 firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-
+                if(dy > 0 || firstVisibleItem == 0){
+                    fab.hide();
+                } else{
+                    fab.show();
+                }
                 if (loading) {
                     if (totalItemCount > previousTotal) {
                         loading = false;
@@ -320,7 +212,6 @@ public class MainActivity extends BaseActivity implements MainView{
                     }
                 }
                 if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                    LogUtils.d("end");
                     mainViewPresenter.getListVideo(CHANNEL_ID, API_KEY, nextPageToken);
                     loading = true;
                 }

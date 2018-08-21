@@ -1,5 +1,5 @@
 package com.gamota.youtubeplayer.presenter;
 
-public interface VideoPlayerPresenter {
+public interface ContentVideoPresenter {
     void getVideo(String videoId, String apiKey);
 }

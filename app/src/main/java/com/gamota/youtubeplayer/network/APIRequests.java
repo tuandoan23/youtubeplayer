@@ -24,7 +24,7 @@ public class APIRequests {
 
     public static Observable<JsonElement> getVideo(String videoId, String apiKey){
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("videoId", videoId);
+        queryMap.put("id", videoId);
         queryMap.put("key", apiKey);
         return BaseAPIRequest.getClient().getVideo(queryMap);
     }

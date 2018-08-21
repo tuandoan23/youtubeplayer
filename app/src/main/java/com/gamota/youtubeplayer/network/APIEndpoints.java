@@ -17,6 +17,6 @@ public interface APIEndpoints {
     @GET("/youtube/v3/channels?part=snippet%2Cstatistics")
     Observable<JsonElement> getChannelInfo(@QueryMap Map<String, Object> queryMap);
 
-    @GET("/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics")
+    @GET("/youtube/v3/videos?part=snippet%2Cstatistics")
     Observable<JsonElement> getVideo(@QueryMap Map<String, Object> queryMap);
 }
