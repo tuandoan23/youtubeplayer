@@ -99,7 +99,7 @@ public class MainActivity extends BaseActivity implements MainView{
 
     private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
     static {
-        suffixes.put(1_000L, "K");
+//        suffixes.put(1_000L, "K");
         suffixes.put(1_000_000L, "M");
         suffixes.put(1_000_000_000L, "B");
         suffixes.put(1_000_000_000_000L, "T");
@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity implements MainView{
         //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
         if (value == Long.MIN_VALUE) return format(Long.MIN_VALUE + 1);
         if (value < 0) return "-" + format(-value);
-        if (value < 1000) return Long.toString(value); //deal with easy case
+        if (value < 1000000) return Long.toString(value); //deal with easy case
 
         Map.Entry<Long, String> e = suffixes.floorEntry(value);
         Long divideBy = e.getKey();
@@ -148,6 +148,7 @@ public class MainActivity extends BaseActivity implements MainView{
             @Override
             public void onClick(View view) {
                 rvListVideo.smoothScrollToPosition(0);
+//                rvListVideo.scrollToPosition(0);
             }
         });
     }
@@ -180,12 +181,14 @@ public class MainActivity extends BaseActivity implements MainView{
         if (!compositeDisposable.isDisposed()) {
             ArrayList<Item> itemsVideo = new ArrayList<>();
             for (int i = 0; i < items.size(); i++) {
-                if (items.get(i).getVideoId().getKind().compareTo("youtube#video") == 0) {
-                    itemsVideo.add(items.get(i));
+                if (items.get(i).getVideoId().getKind().compareTo("youtube#video") != 0) {
+//                    itemsVideo.add(items.get(i));
+                    items.remove(i);
+                    i--;
                 }
             }
             this.nextPageToken = nextPageToken;
-            this.items.addAll(itemsVideo);
+            this.items.addAll(items);
             videoAdapter.notifyDataSetChanged();
             setOnScrollListener(nextPageToken);
         }
@@ -193,7 +196,6 @@ public class MainActivity extends BaseActivity implements MainView{
 
     private void setOnScrollListener(String nextPageToken) {
         rvListVideo.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
