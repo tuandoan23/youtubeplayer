@@ -25,6 +25,7 @@ import com.gamota.youtubeplayer.presenter.MainViewPresenter;
 import com.gamota.youtubeplayer.presenteriplm.MainViewPresenterIplm;
 import com.gamota.youtubeplayer.view.MainView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -46,6 +47,7 @@ public class MainActivity extends BaseActivity implements MainView{
     int visibleItemCount, totalItemCount, firstVisibleItem;
     private int previousTotal = 0;
     private int visibleThreshold = 1;
+    private DecimalFormat formatter = new DecimalFormat("#########");
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -99,7 +101,7 @@ public class MainActivity extends BaseActivity implements MainView{
 
     private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
     static {
-//        suffixes.put(1_000L, "K");
+        suffixes.put(1_000L, "K");
         suffixes.put(1_000_000L, "M");
         suffixes.put(1_000_000_000L, "B");
         suffixes.put(1_000_000_000_000L, "T");
@@ -111,15 +113,23 @@ public class MainActivity extends BaseActivity implements MainView{
         //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
         if (value == Long.MIN_VALUE) return format(Long.MIN_VALUE + 1);
         if (value < 0) return "-" + format(-value);
-        if (value < 1000000) return Long.toString(value); //deal with easy case
+        if (value < 1000) return Long.toString(value); //deal with easy case
 
         Map.Entry<Long, String> e = suffixes.floorEntry(value);
         Long divideBy = e.getKey();
         String suffix = e.getValue();
 
-        long truncated = value / (divideBy / 10); //the number part of the output times 10
+//        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        int truncated = (int) (((double)value / (divideBy / 10)) + 0.5);
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
+    }
+
+    public static int roundUp(int src){
+        int len = String.valueOf(src).length()-1;
+        if (len==0) len=1;
+        int d = (int) Math.pow((double) 10, (double) len);
+        return (src + (d-1))/d*d;
     }
 
     @Override

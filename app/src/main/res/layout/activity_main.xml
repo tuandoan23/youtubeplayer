@@ -39,14 +39,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:id="@+id/tvChannelTitle"
-                    android:textStyle="bold"
-                    android:textSize="20dp"
+                    fontPath="fonts/cabin_bold.ttf"
+                    android:textSize="17dp"
                     android:textColor="@color/default_text_color"
                     android:layout_marginTop="5dp"/>
                 <!--Statistics videos-->
                 <android.support.v7.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="62dp"
                     android:background="@color/default_text_color"
                     android:orientation="horizontal"
                     android:elevation="3dp"
@@ -66,11 +66,11 @@
                             android:id="@+id/tvTotal"
                             android:gravity="center"
                             android:textColor="@color/default_color"
-                            android:textStyle="bold"
+                            fontPath="fonts/cabin_bold.ttf"
                             android:textSize="20dp"/>
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:text="Videos"
                             android:gravity="center"
                             android:textColor="@color/grey_text"/>
@@ -88,7 +88,7 @@
                             android:id="@+id/tvSub"
                             android:gravity="center"
                             android:textColor="@color/default_color"
-                            android:textStyle="bold"
+                            fontPath="fonts/cabin_bold.ttf"
                             android:textSize="20dp"/>
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="match_parent"
@@ -110,7 +110,7 @@
                             android:id="@+id/tvView"
                             android:gravity="center"
                             android:textColor="@color/default_color"
-                            android:textStyle="bold"
+                            fontPath="fonts/cabin_bold.ttf"
                             android:textSize="20dp"/>
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="match_parent"
@@ -123,14 +123,15 @@
             </android.support.v7.widget.LinearLayoutCompat>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvListVideo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#D2DADD"
         android:scrollbarStyle="insideOverlay"
         android:scrollbars="vertical"
-        android:background="#D2DADD"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -139,5 +140,7 @@
         android:src="@drawable/ic_totop"
         android:layout_margin="16dp"
         app:elevation="3dp"
+        app:fabSize="mini"
+        app:backgroundTint="@color/default_text_color"
         android:elevation="3dp" />
 </android.support.design.widget.CoordinatorLayout>
