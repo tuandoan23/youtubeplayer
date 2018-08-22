@@ -8,11 +8,13 @@ import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.apkfuns.logutils.LogUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -33,6 +35,8 @@ import java.util.TreeMap;
 
 import butterknife.BindView;
 
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static com.gamota.youtubeplayer.utils.Utils.API_KEY;
 import static com.gamota.youtubeplayer.utils.Utils.CHANNEL_ID;
 
@@ -43,11 +47,11 @@ public class MainActivity extends BaseActivity implements MainView{
     private ArrayList<Item> items = new ArrayList<>();
     private long total = 0;
     private LinearLayoutManager linearLayoutManager;
+    private GridLayoutManager gridLayoutManager;
     private boolean loading = true;
     int visibleItemCount, totalItemCount, firstVisibleItem;
     private int previousTotal = 0;
     private int visibleThreshold = 1;
-    private DecimalFormat formatter = new DecimalFormat("#########");
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -150,8 +154,14 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void createAdapter() {
         setSupportActionBar(toolbar);
-        linearLayoutManager = new LinearLayoutManager(this);
-        rvListVideo.setLayoutManager(linearLayoutManager);
+        int orientation = getResources().getConfiguration().orientation;
+        if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+            linearLayoutManager = new LinearLayoutManager(this);
+            rvListVideo.setLayoutManager(linearLayoutManager);
+        } else if (orientation == ORIENTATION_LANDSCAPE){
+            gridLayoutManager = new GridLayoutManager(this, 2);
+            rvListVideo.setLayoutManager(gridLayoutManager);
+        }
         videoAdapter = new VideoAdapter(items, this);
         rvListVideo.setAdapter(videoAdapter);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -189,10 +199,8 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void getListVideoSuccess(ArrayList<Item> items, String nextPageToken, String totalResults) {
         if (!compositeDisposable.isDisposed()) {
-            ArrayList<Item> itemsVideo = new ArrayList<>();
             for (int i = 0; i < items.size(); i++) {
                 if (items.get(i).getVideoId().getKind().compareTo("youtube#video") != 0) {
-//                    itemsVideo.add(items.get(i));
                     items.remove(i);
                     i--;
                 }
@@ -209,9 +217,15 @@ public class MainActivity extends BaseActivity implements MainView{
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                int orientation = getResources().getConfiguration().orientation;
                 visibleItemCount = rvListVideo.getChildCount();
-                totalItemCount = linearLayoutManager.getItemCount();
-                firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                if (orientation == ORIENTATION_PORTRAIT) {
+                    totalItemCount = linearLayoutManager.getItemCount();
+                    firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                } else if (orientation == ORIENTATION_LANDSCAPE){
+                    totalItemCount = gridLayoutManager.getItemCount();
+                    firstVisibleItem = gridLayoutManager.findFirstVisibleItemPosition();
+                }
                 if(dy > 0 || firstVisibleItem == 0){
                     fab.hide();
                 } else{
