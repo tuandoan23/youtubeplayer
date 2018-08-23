@@ -14,9 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.RelativeLayout;
 
-import com.apkfuns.logutils.LogUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.VideoAdapter;
@@ -27,7 +25,6 @@ import com.gamota.youtubeplayer.presenter.MainViewPresenter;
 import com.gamota.youtubeplayer.presenteriplm.MainViewPresenterIplm;
 import com.gamota.youtubeplayer.view.MainView;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -99,7 +96,6 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void getChannelInfoError() {
         if (!compositeDisposable.isDisposed()){
-
         }
     }
 
@@ -168,7 +164,6 @@ public class MainActivity extends BaseActivity implements MainView{
             @Override
             public void onClick(View view) {
                 rvListVideo.smoothScrollToPosition(0);
-//                rvListVideo.scrollToPosition(0);
             }
         });
     }
@@ -176,24 +171,6 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void loadData() {
         mainViewPresenter.getChannelInfo(CHANNEL_ID, API_KEY);
-        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String videoId = intent.getStringExtra("videoId");
-                String videoTitle = intent.getStringExtra("videoTitle");
-                String published = intent.getStringExtra("published");
-                boolean isClicked = intent.getBooleanExtra("isClicked",false);
-                if (isClicked){
-                    Intent newIntent = new Intent(getApplicationContext(), ContentVideoActivity.class );
-                    newIntent.putExtra("videoId", videoId);
-                    newIntent.putExtra("videoTitle", videoTitle);
-                    newIntent.putExtra("published", published);
-                    startActivity(newIntent);
-                }
-            }
-        };
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("custom-message"));
     }
 
     @Override

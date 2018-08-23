@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.gamota.youtubeplayer"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -50,4 +50,5 @@ dependencies {
     implementation 'com.facebook.fresco:fresco:1.10.0'
     implementation 'com.android.support:cardview-v7:28.0.0-alpha1'
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
+    implementation 'com.github.armcha:AutoLinkTextView:0.3.0'
 }

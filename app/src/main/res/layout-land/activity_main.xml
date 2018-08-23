@@ -16,10 +16,12 @@
             android:id="@+id/toolbar"
             android:minHeight="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="165dp"
+            android:layout_height="180dp"
             android:background="@drawable/profile_gradient"
             android:gravity="center"
-            app:layout_scrollFlags="scroll|enterAlways|snap">
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:contentInsetStart="0dp"
+            app:contentInsetLeft="0dp">
             <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -27,8 +29,8 @@
                 android:background="@drawable/profile_gradient">
                 <!--Channel Icon-->
                 <com.facebook.drawee.view.SimpleDraweeView
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:id="@+id/imgChannelIcon"
                     android:layout_gravity="center"
                     app:roundAsCircle="true"
@@ -39,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:id="@+id/tvChannelTitle"
-                    fontPath="fonts/cabin_bold.ttf"
+                    fontPath="fonts/roboto_bold.ttf"
                     android:textSize="17dp"
                     android:textColor="@color/default_text_color"
                     android:layout_marginTop="5dp"/>
@@ -52,34 +54,37 @@
                     android:elevation="3dp"
                     android:id="@+id/statistic"
                     android:layout_marginRight="15dp"
-                    android:layout_marginTop="5dp">
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_gravity="center"
+                    android:gravity="center">
                     <!--tvTotal-->
                     <android.support.v7.widget.LinearLayoutCompat
                         android:layout_width="0dp"
                         android:layout_weight="0.33"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="5dp">
+                        android:padding="5dp"
+                        android:gravity="center">
                         <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/tvTotal"
-                            android:gravity="center"
                             android:textColor="@color/default_color"
-                            fontPath="fonts/cabin_bold.ttf"
-                            android:textSize="20dp"/>
+                            fontPath="fonts/roboto_bold.ttf"
+                            android:textSize="19dp"/>
                         <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Videos"
+                            android:text="Total videos"
                             android:gravity="center"
                             android:textColor="@color/grey_text"/>
                     </android.support.v7.widget.LinearLayoutCompat>
                     <!--tvSub-->
                     <android.support.v7.widget.LinearLayoutCompat
                         android:layout_width="0dp"
-                        android:layout_weight="0.33"
-                        android:layout_height="match_parent"
+                        android:layout_weight="0.34"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="5dp">
                         <android.support.v7.widget.AppCompatTextView
@@ -88,11 +93,11 @@
                             android:id="@+id/tvSub"
                             android:gravity="center"
                             android:textColor="@color/default_color"
-                            fontPath="fonts/cabin_bold.ttf"
-                            android:textSize="20dp"/>
+                            fontPath="fonts/roboto_bold.ttf"
+                            android:textSize="19dp"/>
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:text="Subscribers"
                             android:gravity="center"
                             android:textColor="@color/grey_text"/>
@@ -101,21 +106,22 @@
                     <android.support.v7.widget.LinearLayoutCompat
                         android:layout_width="0dp"
                         android:layout_weight="0.33"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="5dp">
+                        android:padding="5dp"
+                        android:layout_gravity="center">
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:id="@+id/tvView"
                             android:gravity="center"
                             android:textColor="@color/default_color"
-                            fontPath="fonts/cabin_bold.ttf"
-                            android:textSize="20dp"/>
+                            fontPath="fonts/roboto_bold.ttf"
+                            android:textSize="19dp"/>
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="Views"
+                            android:layout_height="wrap_content"
+                            android:text="Total views"
                             android:gravity="center"
                             android:textColor="@color/grey_text"/>
                     </android.support.v7.widget.LinearLayoutCompat>

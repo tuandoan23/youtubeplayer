@@ -25,7 +25,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/cabin_regular.ttf")
+                .setDefaultFontPath("fonts/roboto_regular.ttf")
                 .setFontAttrId(R.attr.fontPath)
                 .build()
         );

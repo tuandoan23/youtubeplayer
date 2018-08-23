@@ -1,8 +1,12 @@
 package com.gamota.youtubeplayer.activity;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.text.Html;
+import android.view.MenuItem;
 
 import com.apkfuns.logutils.LogUtils;
 import com.gamota.youtubeplayer.R;
@@ -14,6 +18,14 @@ import com.gamota.youtubeplayer.view.ContentVideoView;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.luseen.autolinklibrary.AutoLinkMode;
+import com.luseen.autolinklibrary.AutoLinkOnClickListener;
+import com.luseen.autolinklibrary.AutoLinkTextView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 
@@ -29,14 +41,11 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @BindView(R.id.channelTitle)
-    AppCompatTextView channelTitle;
-
     @BindView(R.id.tvPublished)
     AppCompatTextView tvPublished;
 
     @BindView(R.id.tvDescription)
-    AppCompatTextView tvDescription;
+    AutoLinkTextView tvDescription;
 
     @Override
     public int initLayout() {
@@ -63,13 +72,9 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setTitle(videoTitle);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-
+        tvDescription.addAutoLinkMode(AutoLinkMode.MODE_URL);
+        tvDescription.setUrlModeColor(Color.rgb(0, 0, 255));
+        tvDescription.setSelectedStateColor(Color.GRAY);
         playerFragment.initialize(API_KEY, new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
@@ -86,16 +91,41 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                ContentVideoActivity.this.overridePendingTransition(0,R.anim.comming_in);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void loadData() {
         contentVideoPresenter.getVideo(videoId, API_KEY);
     }
 
     @Override
     public void getVideoSuccess(Video video) {
-        channelTitle.setText(video.getSnippet().getChannelTitle());
         tvPublished.setText(dateToString(RFC3339ToDate(video.getSnippet().getPublishedAt())));
         tvDescription.setText(video.getSnippet().getDescription());
-        LogUtils.d(video.getSnippet().getDescription());
+        tvDescription.setAutoLinkText(video.getSnippet().getDescription());
+        tvDescription.setAutoLinkOnClickListener(new AutoLinkOnClickListener() {
+            @Override
+            public void onAutoLinkTextClick(AutoLinkMode autoLinkMode, String matchedText) {
+                if (autoLinkMode == AutoLinkMode.MODE_URL) {
+                    try {
+                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(matchedText.trim()));
+                        startActivity(viewIntent);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     @Override
