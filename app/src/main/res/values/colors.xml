@@ -8,4 +8,5 @@
     <color name="black">#4D4D4D</color>
     <color name="grey_text">#99adb2</color>
     <color name="video_background">#F5F6F6</color>
+    <color name="background">#D2DADD</color>
 </resources>

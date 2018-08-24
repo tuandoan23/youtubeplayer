@@ -1,12 +1,8 @@
 package com.gamota.youtubeplayer.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -14,7 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
+import com.apkfuns.logutils.LogUtils;
+import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
+import com.aspsine.swipetoloadlayout.OnRefreshListener;
+import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.VideoAdapter;
@@ -37,7 +38,7 @@ import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static com.gamota.youtubeplayer.utils.Utils.API_KEY;
 import static com.gamota.youtubeplayer.utils.Utils.CHANNEL_ID;
 
-public class MainActivity extends BaseActivity implements MainView{
+public class MainActivity extends BaseActivity implements MainView, OnRefreshListener, OnLoadMoreListener,AppBarLayout.OnOffsetChangedListener {
     private MainViewPresenter mainViewPresenter;
     private String nextPageToken = "";
     private VideoAdapter videoAdapter;
@@ -45,15 +46,19 @@ public class MainActivity extends BaseActivity implements MainView{
     private long total = 0;
     private LinearLayoutManager linearLayoutManager;
     private GridLayoutManager gridLayoutManager;
-    private boolean loading = true;
-    int visibleItemCount, totalItemCount, firstVisibleItem;
-    private int previousTotal = 0;
-    private int visibleThreshold = 1;
+    private boolean refreshing = false;
+    private boolean loading = false;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @BindView(R.id.rvListVideo)
+    @BindView(R.id.swipeToLoadLayout)
+    SwipeToLoadLayout swipeToLoadLayout;
+
+    @BindView(R.id.appBar)
+    AppBarLayout appBar;
+
+    @BindView(R.id.swipe_target)
     RecyclerView rvListVideo;
 
     @BindView(R.id.statistic)
@@ -125,13 +130,6 @@ public class MainActivity extends BaseActivity implements MainView{
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 
-    public static int roundUp(int src){
-        int len = String.valueOf(src).length()-1;
-        if (len==0) len=1;
-        int d = (int) Math.pow((double) 10, (double) len);
-        return (src + (d-1))/d*d;
-    }
-
     @Override
     public int initLayout() {
         return R.layout.activity_main;
@@ -150,6 +148,9 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void createAdapter() {
         setSupportActionBar(toolbar);
+        swipeToLoadLayout.setOnRefreshListener(this);
+        swipeToLoadLayout.setOnLoadMoreListener(this);
+        appBar.addOnOffsetChangedListener(this);
         int orientation = getResources().getConfiguration().orientation;
         if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
             linearLayoutManager = new LinearLayoutManager(this);
@@ -176,6 +177,14 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void getListVideoSuccess(ArrayList<Item> items, String nextPageToken, String totalResults) {
         if (!compositeDisposable.isDisposed()) {
+            if (loading)
+                loading = false;
+            if (refreshing){
+                this.items.clear();
+                this.rvListVideo.removeAllViews();
+                LogUtils.d("nextPageToken: " + nextPageToken);
+                refreshing = false;
+            }
             for (int i = 0; i < items.size(); i++) {
                 if (items.get(i).getVideoId().getKind().compareTo("youtube#video") != 0) {
                     items.remove(i);
@@ -185,47 +194,53 @@ public class MainActivity extends BaseActivity implements MainView{
             this.nextPageToken = nextPageToken;
             this.items.addAll(items);
             videoAdapter.notifyDataSetChanged();
-            setOnScrollListener(nextPageToken);
+            if (nextPageToken == null)
+                Toast.makeText(getApplicationContext(),"Loaded all videos",Toast.LENGTH_LONG ).show();
         }
-    }
-
-    private void setOnScrollListener(String nextPageToken) {
-        rvListVideo.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int orientation = getResources().getConfiguration().orientation;
-                visibleItemCount = rvListVideo.getChildCount();
-                if (orientation == ORIENTATION_PORTRAIT) {
-                    totalItemCount = linearLayoutManager.getItemCount();
-                    firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-                } else if (orientation == ORIENTATION_LANDSCAPE){
-                    totalItemCount = gridLayoutManager.getItemCount();
-                    firstVisibleItem = gridLayoutManager.findFirstVisibleItemPosition();
-                }
-                if(dy > 0 || firstVisibleItem == 0){
-                    fab.hide();
-                } else{
-                    fab.show();
-                }
-                if (loading) {
-                    if (totalItemCount > previousTotal) {
-                        loading = false;
-                        previousTotal = totalItemCount;
-                    }
-                }
-                if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                    mainViewPresenter.getListVideo(CHANNEL_ID, API_KEY, nextPageToken);
-                    loading = true;
-                }
-            }
-        });
     }
 
     @Override
     public void getListVideoError() {
         if (!compositeDisposable.isDisposed()){
-
+            if (refreshing){
+                Toast.makeText(this,"Connection failed! Cannot refresh video!",Toast.LENGTH_LONG ).show();
+            } else if (loading){
+                Toast.makeText(this,"Connection failed! Cannot load video!",Toast.LENGTH_LONG ).show();
+            }
         }
+    }
+
+    @Override
+    public void onLoadMore() {
+        swipeToLoadLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeToLoadLayout.setLoadingMore(false);
+                loading = true;
+                if (nextPageToken != null) {
+                    mainViewPresenter.getListVideo(CHANNEL_ID, API_KEY, nextPageToken);
+                } else {
+                    Toast.makeText(getApplicationContext(),"Loaded all videos",Toast.LENGTH_LONG ).show();
+                }
+            }
+        }, 1500);
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeToLoadLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeToLoadLayout.setRefreshing(false);
+                refreshing = true;
+                mainViewPresenter.getListVideo(CHANNEL_ID, API_KEY,"");
+            }
+        }, 1500);
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        if (!swipeToLoadLayout.isRefreshing())
+            swipeToLoadLayout.setRefreshEnabled(verticalOffset==0);
     }
 }

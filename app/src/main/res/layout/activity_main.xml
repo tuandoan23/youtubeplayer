@@ -10,8 +10,8 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:elevation="0dp">
+        app:elevation="0dp"
+        android:id="@+id/appBar">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:minHeight="?attr/actionBarSize"
@@ -72,7 +72,7 @@
                             android:id="@+id/tvTotal"
                             android:textColor="@color/default_color"
                             fontPath="fonts/roboto_bold.ttf"
-                            android:textSize="19dp"/>
+                            android:textSize="20dp"/>
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
                             android:gravity="center"
                             android:textColor="@color/default_color"
                             fontPath="fonts/roboto_bold.ttf"
-                            android:textSize="19dp"/>
+                            android:textSize="20dp"/>
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -108,8 +108,7 @@
                         android:layout_weight="0.33"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="5dp"
-                        android:layout_gravity="center">
+                        android:padding="5dp">
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -117,7 +116,7 @@
                             android:gravity="center"
                             android:textColor="@color/default_color"
                             fontPath="fonts/roboto_bold.ttf"
-                            android:textSize="19dp"/>
+                            android:textSize="20dp"/>
                         <android.support.v7.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -130,14 +129,38 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvListVideo"
+    <!--Swipe to load layout-->
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#D2DADD"
-        android:scrollbarStyle="insideOverlay"
-        android:scrollbars="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="wrap_content"
+        android:id="@+id/swipeToLoadLayout"
+        android:background="@color/background"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <com.gamota.youtubeplayer.LoadLayout.RefreshHeaderView
+            android:id="@id/swipe_refresh_header"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="50dp"
+            android:background="@color/background"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"/>
+
+        <com.gamota.youtubeplayer.LoadLayout.LoadMoreFooterView
+            android:id="@id/swipe_load_more_footer"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="50dp"
+            android:background="@color/background"/>
+
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

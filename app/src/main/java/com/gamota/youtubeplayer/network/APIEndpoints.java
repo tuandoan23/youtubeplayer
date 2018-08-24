@@ -11,7 +11,7 @@ import retrofit2.http.QueryMap;
 
 public interface APIEndpoints {
 
-    @GET("/youtube/v3/search?part=snippet%2Cid&order=date")
+    @GET("/youtube/v3/search?part=snippet%2Cid&order=date&maxResults=6")
     Observable<JsonElement> getListVideo(@QueryMap Map<String, Object> queryMap);
 
     @GET("/youtube/v3/channels?part=snippet%2Cstatistics")

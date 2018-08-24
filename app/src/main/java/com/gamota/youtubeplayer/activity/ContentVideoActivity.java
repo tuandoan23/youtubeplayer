@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.MenuItem;
 
 import com.apkfuns.logutils.LogUtils;
@@ -22,13 +21,10 @@ import com.luseen.autolinklibrary.AutoLinkMode;
 import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.luseen.autolinklibrary.AutoLinkTextView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import butterknife.BindView;
 
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static com.gamota.youtubeplayer.utils.Utils.API_KEY;
 import static com.gamota.youtubeplayer.utils.Utils.RFC3339ToDate;
 import static com.gamota.youtubeplayer.utils.Utils.dateToString;
@@ -79,8 +75,11 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
                 if (!b){
-                    youTubePlayer.loadVideo(videoId);
                     youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+                    if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
+                        youTubePlayer.setFullscreen(true);
+                    }
+                    youTubePlayer.loadVideo(videoId);
                 }
             }
             @Override
@@ -110,22 +109,24 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
 
     @Override
     public void getVideoSuccess(Video video) {
-        tvPublished.setText(dateToString(RFC3339ToDate(video.getSnippet().getPublishedAt())));
-        tvDescription.setText(video.getSnippet().getDescription());
-        tvDescription.setAutoLinkText(video.getSnippet().getDescription());
-        tvDescription.setAutoLinkOnClickListener(new AutoLinkOnClickListener() {
-            @Override
-            public void onAutoLinkTextClick(AutoLinkMode autoLinkMode, String matchedText) {
-                if (autoLinkMode == AutoLinkMode.MODE_URL) {
-                    try {
-                        Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(matchedText.trim()));
-                        startActivity(viewIntent);
-                    } catch (Exception e){
-                        e.printStackTrace();
+        if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+            tvPublished.setText(dateToString(RFC3339ToDate(video.getSnippet().getPublishedAt())));
+            tvDescription.setText(video.getSnippet().getDescription());
+            tvDescription.setAutoLinkText(video.getSnippet().getDescription());
+            tvDescription.setAutoLinkOnClickListener(new AutoLinkOnClickListener() {
+                @Override
+                public void onAutoLinkTextClick(AutoLinkMode autoLinkMode, String matchedText) {
+                    if (autoLinkMode == AutoLinkMode.MODE_URL) {
+                        try {
+                            Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(matchedText.trim()));
+                            startActivity(viewIntent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
