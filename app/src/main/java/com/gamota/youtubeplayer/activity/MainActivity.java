@@ -1,15 +1,20 @@
 package com.gamota.youtubeplayer.activity;
 
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.apkfuns.logutils.LogUtils;
@@ -26,17 +31,21 @@ import com.gamota.youtubeplayer.presenter.MainViewPresenter;
 import com.gamota.youtubeplayer.presenteriplm.MainViewPresenterIplm;
 import com.gamota.youtubeplayer.view.MainView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static com.gamota.youtubeplayer.utils.Utils.API_KEY;
 import static com.gamota.youtubeplayer.utils.Utils.CHANNEL_ID;
+import static com.gamota.youtubeplayer.utils.Utils.getTimeAgo;
 
 public class MainActivity extends BaseActivity implements MainView, OnRefreshListener, OnLoadMoreListener,AppBarLayout.OnOffsetChangedListener {
     private MainViewPresenter mainViewPresenter;
@@ -69,6 +78,12 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
+    @BindView(R.id.llError)
+    LinearLayoutCompat llError;
+
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+
     @Override
     public void getChannelInfoSuccess(ChannelInfo channelInfo) {
         if (!compositeDisposable.isDisposed()) {
@@ -82,6 +97,10 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
     @Override
     public void getChannelInfoError() {
         if (!compositeDisposable.isDisposed()){
+            swipeToLoadLayout.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            llError.setVisibility(View.VISIBLE);
+            fab.setVisibility(View.GONE);
         }
     }
 
@@ -129,6 +148,9 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
     @Override
     public void createAdapter() {
         setSupportActionBar(toolbar);
+        progressBar.setVisibility(View.VISIBLE);
+        swipeToLoadLayout.setVisibility(View.GONE);
+        llError.setVisibility(View.GONE);
         swipeToLoadLayout.setOnRefreshListener(this);
         swipeToLoadLayout.setOnLoadMoreListener(this);
         appBar.addOnOffsetChangedListener(this);
@@ -149,6 +171,7 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
                 rvListVideo.smoothScrollToPosition(0);
             }
         });
+
     }
 
     @Override
@@ -159,6 +182,9 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
     @Override
     public void getListVideoSuccess(ArrayList<Item> items, String nextPageToken, String totalResults) {
         if (!compositeDisposable.isDisposed()) {
+            progressBar.setVisibility(View.GONE);
+            swipeToLoadLayout.setVisibility(View.VISIBLE);
+            llError.setVisibility(View.GONE);
             if (loading)
                 loading = false;
             if (refreshing){
@@ -187,6 +213,10 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
                 Toast.makeText(this,"Connection failed! Cannot refresh video!",Toast.LENGTH_LONG ).show();
             } else if (loading){
                 Toast.makeText(this,"Connection failed! Cannot load video!",Toast.LENGTH_LONG ).show();
+            } else if (nextPageToken == "") {
+                progressBar.setVisibility(View.GONE);
+                llError.setVisibility(View.VISIBLE);
+                fab.setVisibility(View.GONE);
             }
         }
     }

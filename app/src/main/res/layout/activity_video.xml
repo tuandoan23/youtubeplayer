@@ -114,21 +114,23 @@
                 android:layout_height="0.5dp"
                 android:background="@color/background"
                 android:layout_marginTop="5dp"/>
-
             <!--Comment-->
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/rvListComment">
             </android.support.v7.widget.RecyclerView>
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="match_parent"
+            <android.support.v7.widget.AppCompatButton
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/load_more"
+                android:textAllCaps="false"
                 android:gravity="center"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:id="@+id/tvLoadMore"/>
+                android:id="@+id/btnLoadMore"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
         </android.support.v7.widget.LinearLayoutCompat>
     </android.support.v7.widget.LinearLayoutCompat>
 </android.support.v4.widget.NestedScrollView>

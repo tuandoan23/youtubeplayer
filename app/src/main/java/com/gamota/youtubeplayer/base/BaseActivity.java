@@ -3,6 +3,8 @@ package com.gamota.youtubeplayer.base;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.text.emoji.EmojiCompat;
+import android.support.text.emoji.bundled.BundledEmojiCompatConfig;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,6 +31,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .setFontAttrId(R.attr.fontPath)
                 .build()
         );
+        EmojiCompat.Config config = new BundledEmojiCompatConfig(this);
+        EmojiCompat.init(config);
         TimeZone.setDefault(TimeZone.getTimeZone("GMT+7"));
         if (android.os.Build.VERSION.SDK_INT >= 21) {
             Window window = this.getWindow();

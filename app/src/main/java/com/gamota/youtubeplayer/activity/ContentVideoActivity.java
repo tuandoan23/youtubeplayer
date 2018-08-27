@@ -3,7 +3,9 @@ package com.gamota.youtubeplayer.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -35,8 +37,7 @@ import butterknife.BindView;
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static com.gamota.youtubeplayer.utils.Utils.API_KEY;
-import static com.gamota.youtubeplayer.utils.Utils.RFC3339ToDate;
-import static com.gamota.youtubeplayer.utils.Utils.dateToString;
+import static com.gamota.youtubeplayer.utils.Utils.RFC3339ToDateString;
 
 public class ContentVideoActivity extends BaseActivity implements ContentVideoView{
     private ContentVideoPresenter contentVideoPresenter;
@@ -60,8 +61,8 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     @BindView(R.id.rvListComment)
     RecyclerView rvListCommnet;
 
-    @BindView(R.id.tvLoadMore)
-    AppCompatTextView tvLoadMore;
+    @BindView(R.id.btnLoadMore)
+    AppCompatButton btnLoadMore;
 
 //    @BindView(R.id.tvCountLike)
 //    AppCompatTextView tvCountLike;
@@ -146,7 +147,7 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     public void getVideoSuccess(Video video) {
         if (!compositeDisposable.isDisposed()) {
             if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
-                tvPublished.setText(dateToString(RFC3339ToDate(video.getSnippet().getPublishedAt())));
+                tvPublished.setText(RFC3339ToDateString((video.getSnippet().getPublishedAt())));
 //                tvCountLike.setText(video.getStatistics().getLikeCount());
 //                tvCountDislike.setText(video.getStatistics().getDislikeCount());
 //                tvCountView.setText(video.getStatistics().getViewCount());
@@ -169,12 +170,12 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
                 if (commentCount > 0) {
                     contentVideoPresenter.getListComment(videoId, API_KEY, nextPageTokenComments);
                     if (commentCount > 4){
-                        tvLoadMore.setVisibility(View.VISIBLE);
+                        btnLoadMore.setVisibility(View.VISIBLE);
                     } else {
-                        tvLoadMore.setVisibility(View.GONE);
+                        btnLoadMore.setVisibility(View.GONE);
                     }
                 } else {
-                    tvLoadMore.setVisibility(View.GONE);
+                    btnLoadMore.setVisibility(View.GONE);
                 }
             }
         }
@@ -190,18 +191,14 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     @Override
     public void getListCommentSuccess(ArrayList<Item> items, String nextPageToken) {
         if (!compositeDisposable.isDisposed()) {
-            LogUtils.d("comment:  " + "items:" + items.size() + nextPageToken);
             comments.addAll(items);
-            LogUtils.d(comments.size());
             nextPageTokenComments = nextPageToken;
-            LogUtils.d("start");
             commentAdapter.notifyDataSetChanged();
-            LogUtils.d("done");
             if (nextPageToken == null) {
 //                Toast.makeText(getApplicationContext(), "Loaded all comments", Toast.LENGTH_LONG).show();
-               tvLoadMore.setVisibility(View.GONE);
+                btnLoadMore.setVisibility(View.GONE);
             }
-            tvLoadMore.setOnClickListener(new View.OnClickListener() {
+            btnLoadMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     contentVideoPresenter.getListComment(videoId,API_KEY, nextPageToken);

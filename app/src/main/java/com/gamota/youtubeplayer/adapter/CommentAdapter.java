@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.text.emoji.widget.EmojiAppCompatTextView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -19,6 +20,7 @@ import com.gamota.youtubeplayer.model.comment.Item;
 import com.gamota.youtubeplayer.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +39,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         AppCompatTextView tvUser;
 
         @BindView(R.id.tvComment)
-        AppCompatTextView tvComment;
+        EmojiAppCompatTextView tvComment;
 
         @BindView(R.id.imgUserIcon)
         SimpleDraweeView imgUserIcon;
@@ -68,7 +70,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         viewHolder.imgUserIcon.setImageURI(uri);
         viewHolder.tvUser.setText(comment.getSnippet().getTopLevelComment().getSnippetComment().getAuthorDisplayName());
         viewHolder.tvComment.setText(Html.fromHtml(comment.getSnippet().getTopLevelComment().getSnippetComment().getTextOriginal()));
-        viewHolder.tvPublishedComment.setText(Utils.dateToTime(Utils.RFC3339ToDate(comment.getSnippet().getTopLevelComment().getSnippetComment().getPublishedAt())));
+        viewHolder.tvPublishedComment.setText(Utils.getTimeAgo(Utils.RFC3339ToDate(comment.getSnippet().getTopLevelComment().getSnippetComment().getPublishedAt())));
     }
 
     @Override
