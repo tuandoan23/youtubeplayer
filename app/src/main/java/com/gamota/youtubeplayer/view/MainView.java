@@ -1,8 +1,7 @@
 package com.gamota.youtubeplayer.view;
 
-import com.gamota.youtubeplayer.model.Channel.ChannelInfo;
-import com.gamota.youtubeplayer.model.ListVideoModel.Item;
-import com.gamota.youtubeplayer.model.ListVideoModel.ListVideo;
+import com.gamota.youtubeplayer.model.channel.ChannelInfo;
+import com.gamota.youtubeplayer.model.listvideomodel.Item;
 
 import java.util.ArrayList;
 

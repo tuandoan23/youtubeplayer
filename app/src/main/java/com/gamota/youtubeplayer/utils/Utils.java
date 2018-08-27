@@ -23,4 +23,10 @@ public class Utils {
         String dateTime = formatToDate.format(date);
         return dateTime;
     }
+
+    public static String dateToTime(Date date){
+        SimpleDateFormat formatToDate = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        String dateTime = formatToDate.format(date);
+        return dateTime;
+    }
 }

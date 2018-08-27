@@ -52,4 +52,5 @@ dependencies {
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
     implementation 'com.github.armcha:AutoLinkTextView:0.3.0'
     implementation 'com.github.Aspsine:SwipeToLoadLayout:1.0.4'
+
 }

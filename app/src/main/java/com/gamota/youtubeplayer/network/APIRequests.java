@@ -38,4 +38,14 @@ public class APIRequests {
         }
         return BaseAPIRequest.getClient().getListVideo(queryMap);
     }
+
+    public static Observable<JsonElement> getListComment(String videoId, String apiKey, String pageToken){
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("videoId", videoId);
+        queryMap.put("key", apiKey);
+        if (pageToken != "") {
+            queryMap.put("pageToken", pageToken);
+        }
+        return BaseAPIRequest.getClient().getListComment(queryMap);
+    }
 }

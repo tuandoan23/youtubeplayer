@@ -1,12 +1,15 @@
 package com.gamota.youtubeplayer.presenteriplm;
 
 import com.apkfuns.logutils.LogUtils;
-import com.gamota.youtubeplayer.model.Video.Video;
+import com.gamota.youtubeplayer.model.comment.Item;
+import com.gamota.youtubeplayer.model.video.Video;
 import com.gamota.youtubeplayer.network.APIRequests;
 import com.gamota.youtubeplayer.presenter.ContentVideoPresenter;
 import com.gamota.youtubeplayer.view.ContentVideoView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -20,6 +23,25 @@ public class ContentVideoPresenterIplm implements ContentVideoPresenter {
     public ContentVideoPresenterIplm(ContentVideoView contentVideoView, CompositeDisposable compositeDisposable) {
         this.contentVideoView = contentVideoView;
         this.compositeDisposable = compositeDisposable;
+    }
+
+    @Override
+    public void getListComment(String videoId, String apiKey, String pageToken) {
+        Disposable getListCommentWithPageTokenRequest = APIRequests.getListComment(videoId, apiKey, pageToken)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(jsonElement -> {
+                    LogUtils.d("getListComment success = " + jsonElement);
+                    Gson gson = new Gson();
+                    ArrayList<Item> items = gson.fromJson(jsonElement.getAsJsonObject().get("items"), new TypeToken<ArrayList<Item>>(){}.getType());
+                    String nextPageToken = gson.fromJson(jsonElement.getAsJsonObject().get("nextPageToken"), new TypeToken<String>(){}.getType());
+                    contentVideoView.getListCommentSuccess(items, nextPageToken);
+                }, throwable -> {
+                    LogUtils.e("getListComment error = " + throwable);
+                    throwable.printStackTrace();
+                    contentVideoView.getListCommentError();
+                });
+        compositeDisposable.add(getListCommentWithPageTokenRequest);
     }
 
     @Override

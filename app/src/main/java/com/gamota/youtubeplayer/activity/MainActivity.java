@@ -1,11 +1,11 @@
 package com.gamota.youtubeplayer.activity;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,8 +20,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.VideoAdapter;
 import com.gamota.youtubeplayer.base.BaseActivity;
-import com.gamota.youtubeplayer.model.Channel.ChannelInfo;
-import com.gamota.youtubeplayer.model.ListVideoModel.Item;
+import com.gamota.youtubeplayer.model.channel.ChannelInfo;
+import com.gamota.youtubeplayer.model.listvideomodel.Item;
 import com.gamota.youtubeplayer.presenter.MainViewPresenter;
 import com.gamota.youtubeplayer.presenteriplm.MainViewPresenterIplm;
 import com.gamota.youtubeplayer.view.MainView;
@@ -43,7 +43,6 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
     private String nextPageToken = "";
     private VideoAdapter videoAdapter;
     private ArrayList<Item> items = new ArrayList<>();
-    private long total = 0;
     private LinearLayoutManager linearLayoutManager;
     private GridLayoutManager gridLayoutManager;
     private boolean refreshing = false;
@@ -61,18 +60,6 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
     @BindView(R.id.swipe_target)
     RecyclerView rvListVideo;
 
-    @BindView(R.id.statistic)
-    LinearLayoutCompat statistic;
-
-    @BindView(R.id.tvTotal)
-    AppCompatTextView tvTotal;
-
-    @BindView(R.id.tvSub)
-    AppCompatTextView tvSub;
-
-    @BindView(R.id.tvView)
-    AppCompatTextView tvView;
-
     @BindView(R.id.tvChannelTitle)
     AppCompatTextView tvChannelTitle;
 
@@ -88,12 +75,6 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
             tvChannelTitle.setText(channelInfo.getSnippet().getTitle().toString());
             Uri uri = Uri.parse(channelInfo.getSnippet().getThumbnails().getDefault().getUrl().toString());
             imgChannelIcon.setImageURI(uri);
-            total = Long.parseLong(channelInfo.getStatistics().getVideoCount());
-            tvTotal.setText(format(total));
-            long sub = Long.parseLong(channelInfo.getStatistics().getSubscriberCount());
-            tvSub.setText(format(sub));
-            long view = Long.parseLong(channelInfo.getStatistics().getViewCount());
-            tvView.setText(format(view));
             mainViewPresenter.getListVideo(CHANNEL_ID, API_KEY, nextPageToken);
         }
     }
@@ -152,7 +133,7 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
         swipeToLoadLayout.setOnLoadMoreListener(this);
         appBar.addOnOffsetChangedListener(this);
         int orientation = getResources().getConfiguration().orientation;
-        if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+        if (orientation == ORIENTATION_PORTRAIT) {
             linearLayoutManager = new LinearLayoutManager(this);
             rvListVideo.setLayoutManager(linearLayoutManager);
         } else if (orientation == ORIENTATION_LANDSCAPE){
@@ -161,6 +142,7 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
         }
         videoAdapter = new VideoAdapter(items, this);
         rvListVideo.setAdapter(videoAdapter);
+        setOnScrollListener();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,7 +164,6 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
             if (refreshing){
                 this.items.clear();
                 this.rvListVideo.removeAllViews();
-                LogUtils.d("nextPageToken: " + nextPageToken);
                 refreshing = false;
             }
             for (int i = 0; i < items.size(); i++) {
@@ -208,6 +189,26 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
                 Toast.makeText(this,"Connection failed! Cannot load video!",Toast.LENGTH_LONG ).show();
             }
         }
+    }
+
+    private void setOnScrollListener(){
+        rvListVideo.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int firstVisibleItem = 0;
+                if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+                    firstVisibleItem  = linearLayoutManager.findFirstVisibleItemPosition();
+                } else if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE){
+                    firstVisibleItem = gridLayoutManager.findFirstVisibleItemPosition();
+                }
+                if (dy > 0 || firstVisibleItem == 0){
+                    fab.hide();
+                } else {
+                    fab.show();
+                }
+            }
+        });
     }
 
     @Override

@@ -9,14 +9,15 @@
     android:orientation="vertical">
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         app:elevation="0dp"
-        android:id="@+id/appBar">
+        android:id="@+id/appBar"
+        android:background="@color/background">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:minHeight="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="match_parent"
             android:background="@drawable/profile_gradient"
             android:gravity="center"
             app:layout_scrollFlags="scroll|enterAlways|snap"
@@ -45,86 +46,6 @@
                     android:textSize="17dp"
                     android:textColor="@color/default_text_color"
                     android:layout_marginTop="5dp"/>
-                <!--Statistics videos-->
-                <android.support.v7.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="62dp"
-                    android:background="@color/default_text_color"
-                    android:orientation="horizontal"
-                    android:elevation="3dp"
-                    android:id="@+id/statistic"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_gravity="center"
-                    android:gravity="center">
-                    <!--tvTotal-->
-                    <android.support.v7.widget.LinearLayoutCompat
-                        android:layout_width="0dp"
-                        android:layout_weight="0.33"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="5dp"
-                        android:gravity="center">
-                        <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/tvTotal"
-                            android:textColor="@color/default_color"
-                            fontPath="fonts/roboto_bold.ttf"
-                            android:textSize="20dp"/>
-                        <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Total videos"
-                            android:gravity="center"
-                            android:textColor="@color/grey_text"/>
-                    </android.support.v7.widget.LinearLayoutCompat>
-                    <!--tvSub-->
-                    <android.support.v7.widget.LinearLayoutCompat
-                        android:layout_width="0dp"
-                        android:layout_weight="0.34"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="5dp">
-                        <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/tvSub"
-                            android:gravity="center"
-                            android:textColor="@color/default_color"
-                            fontPath="fonts/roboto_bold.ttf"
-                            android:textSize="20dp"/>
-                        <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Subscribers"
-                            android:gravity="center"
-                            android:textColor="@color/grey_text"/>
-                    </android.support.v7.widget.LinearLayoutCompat>
-                    <!--tvViews-->
-                    <android.support.v7.widget.LinearLayoutCompat
-                        android:layout_width="0dp"
-                        android:layout_weight="0.33"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="5dp">
-                        <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/tvView"
-                            android:gravity="center"
-                            android:textColor="@color/default_color"
-                            fontPath="fonts/roboto_bold.ttf"
-                            android:textSize="20dp"/>
-                        <android.support.v7.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Total views"
-                            android:gravity="center"
-                            android:textColor="@color/grey_text"/>
-                    </android.support.v7.widget.LinearLayoutCompat>
-                </android.support.v7.widget.LinearLayoutCompat>
             </android.support.v7.widget.LinearLayoutCompat>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
@@ -137,7 +58,7 @@
         android:background="@color/background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.gamota.youtubeplayer.LoadLayout.RefreshHeaderView
+        <com.gamota.youtubeplayer.loadlayout.RefreshHeaderView
             android:id="@id/swipe_refresh_header"
             android:layout_width="match_parent"
             android:gravity="center"
@@ -152,7 +73,7 @@
             android:scrollbarStyle="insideOverlay"
             android:scrollbars="vertical"/>
 
-        <com.gamota.youtubeplayer.LoadLayout.LoadMoreFooterView
+        <com.gamota.youtubeplayer.loadlayout.LoadMoreFooterView
             android:id="@id/swipe_load_more_footer"
             android:layout_width="match_parent"
             android:gravity="center"

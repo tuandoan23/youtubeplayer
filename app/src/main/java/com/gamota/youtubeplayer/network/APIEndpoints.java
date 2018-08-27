@@ -19,4 +19,7 @@ public interface APIEndpoints {
 
     @GET("/youtube/v3/videos?part=snippet%2Cstatistics")
     Observable<JsonElement> getVideo(@QueryMap Map<String, Object> queryMap);
+
+    @GET("/youtube/v3/commentThreads?part=snippet&maxResults=4&order=time")
+    Observable<JsonElement> getListComment(@QueryMap Map<String, Object> queryMap);
 }

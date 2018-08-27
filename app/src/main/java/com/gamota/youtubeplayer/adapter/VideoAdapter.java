@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.activity.ContentVideoActivity;
-import com.gamota.youtubeplayer.model.ListVideoModel.Item;
+import com.gamota.youtubeplayer.model.listvideomodel.Item;
 
 import java.util.ArrayList;
 
@@ -68,13 +68,10 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             public void onClick(View view) {
                 String videoId = video.getVideoId().getVideoId();
                 String videoTitle = video.getSnippet().getTitle();
-                String published = video.getSnippet().getPublishedAt();
-                String description = video.getSnippet().getDescription();
 
                 Intent newIntent = new Intent(context, ContentVideoActivity.class );
                 newIntent.putExtra("videoId", videoId);
                 newIntent.putExtra("videoTitle", videoTitle);
-                newIntent.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
                 context.startActivity(newIntent);
             }
         });

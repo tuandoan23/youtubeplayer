@@ -1,9 +1,8 @@
 package com.gamota.youtubeplayer.presenteriplm;
 
 import com.apkfuns.logutils.LogUtils;
-import com.gamota.youtubeplayer.model.Channel.ChannelInfo;
-import com.gamota.youtubeplayer.model.ListVideoModel.Item;
-import com.gamota.youtubeplayer.model.ListVideoModel.ListVideo;
+import com.gamota.youtubeplayer.model.channel.ChannelInfo;
+import com.gamota.youtubeplayer.model.listvideomodel.Item;
 import com.gamota.youtubeplayer.network.APIRequests;
 import com.gamota.youtubeplayer.presenter.MainViewPresenter;
 import com.gamota.youtubeplayer.view.MainView;
