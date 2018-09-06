@@ -1,8 +1,5 @@
 package com.gamota.youtubeplayer.utils;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.apkfuns.logutils.LogUtils;
 
 import java.text.ParseException;
@@ -16,12 +13,6 @@ import java.util.concurrent.TimeUnit;
 public class Utils {
     public static final String API_KEY = "AIzaSyBsrViFNAWWmWs0tVJ5z221PfWlsNZa8OQ";
     public static final String CHANNEL_ID = "UCx6iGPCoUxb-7jAInKiql5g";
-    private static final int SECOND_MILLIS = 1000;
-    private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
-    private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
-    private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
-    private static final int MONTH_MILLIS = 30 * DAY_MILLIS;
-    private static final int YEAR_MILLIS = 365 * DAY_MILLIS;
     public static final List<Long> times = Arrays.asList(
             TimeUnit.DAYS.toMillis(365),
             TimeUnit.DAYS.toMillis(30),

@@ -8,12 +8,6 @@ import java.util.HashMap;
 import io.reactivex.Observable;
 
 public class APIRequests {
-//    public static Observable<JsonElement> getListVideo(String channelId, String apiKey){
-//        HashMap<String, Object> queryMap = new HashMap<>();
-//        queryMap.put("channelId", channelId);
-//        queryMap.put("key", apiKey);
-//        return BaseAPIRequest.getClient().getListVideo(queryMap);
-//    }
 
     public static Observable<JsonElement> getChannelInfo(String channelId, String apiKey){
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -37,6 +31,17 @@ public class APIRequests {
             queryMap.put("pageToken", pageToken);
         }
         return BaseAPIRequest.getClient().getListVideo(queryMap);
+    }
+
+    public static Observable<JsonElement> searchVideo(String channelId, String apiKey, String pageToken, String q){
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("channelId", channelId);
+        queryMap.put("key", apiKey);
+        queryMap.put("q", q);
+        if (pageToken != "") {
+            queryMap.put("pageToken", pageToken);
+        }
+        return BaseAPIRequest.getClient().searchVideo(queryMap);
     }
 
     public static Observable<JsonElement> getListComment(String videoId, String apiKey, String pageToken){

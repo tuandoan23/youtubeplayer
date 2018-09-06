@@ -9,4 +9,5 @@
     <color name="grey_text">#99adb2</color>
     <color name="video_background">#F5F6F6</color>
     <color name="background">#D2DADD</color>
+    <color name="background_search">#EEEEEE</color>
 </resources>

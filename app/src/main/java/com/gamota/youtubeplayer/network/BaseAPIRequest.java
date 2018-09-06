@@ -1,6 +1,5 @@
 package com.gamota.youtubeplayer.network;
 
-import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import okhttp3.OkHttpClient;

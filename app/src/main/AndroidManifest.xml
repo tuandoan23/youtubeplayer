@@ -9,7 +9,7 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:label="Gameub Video"
+        android:label="GameHub Video"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
 
         <activity android:name=".activity.MainActivity">
@@ -30,6 +30,7 @@
                 <data android:scheme="https" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.SearchActivity"/>
     </application>
 
 </manifest>

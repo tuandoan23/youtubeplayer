@@ -23,34 +23,55 @@
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
-            <android.support.v7.widget.LinearLayoutCompat
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="@drawable/profile_gradient">
-                <!--Channel Icon-->
-                <com.facebook.drawee.view.SimpleDraweeView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:id="@+id/imgChannelIcon"
-                    android:layout_gravity="center"
-                    app:roundAsCircle="true"
-                    android:layout_marginTop="10dp"/>
-                <!--Channel Title-->
-                <android.support.v7.widget.AppCompatTextView
+                android:layout_height="match_parent">
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="@drawable/profile_gradient">
+                    <!--Channel Icon-->
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:id="@+id/imgChannelIcon"
+                        android:layout_gravity="center"
+                        app:roundAsCircle="true"
+                        android:layout_marginTop="10dp"/>
+                    <!--Channel Title-->
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:id="@+id/tvChannelTitle"
+                        fontPath="fonts/roboto_bold.ttf"
+                        android:textSize="17dp"
+                        android:textColor="@color/default_text_color"
+                        android:layout_marginTop="5dp"/>
+                </android.support.v7.widget.LinearLayoutCompat>
+
+                <android.support.v7.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:id="@+id/tvChannelTitle"
-                    fontPath="fonts/roboto_bold.ttf"
-                    android:textSize="17dp"
-                    android:textColor="@color/default_text_color"
-                    android:layout_marginTop="5dp"/>
-            </android.support.v7.widget.LinearLayoutCompat>
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="5dp">
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_search_white"
+                        android:id="@+id/imgSearch"/>
+                </android.support.v7.widget.LinearLayoutCompat>
+            </RelativeLayout>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
 
+    <ProgressBar
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:id="@+id/progressBar"/>
 
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"

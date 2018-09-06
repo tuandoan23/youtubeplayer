@@ -85,19 +85,34 @@
 
             <!--Published-->
             <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp">
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                android:layout_marginTop="10dp">
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_weight="0.9"
                     android:layout_height="wrap_content"
-                    android:text="Published on "/>
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp">
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Published on "/>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvPublished"/>
+                </android.support.v7.widget.LinearLayoutCompat>
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_weight="0.1"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvPublished"/>
+                    android:gravity="center">
+                    <android.support.v7.widget.AppCompatImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ic_favorite_border"/>
+                </android.support.v7.widget.LinearLayoutCompat>
             </android.support.v7.widget.LinearLayoutCompat>
 
             <!--Description-->
