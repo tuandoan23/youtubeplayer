@@ -1,52 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FFF">
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <com.google.android.youtube.player.YouTubePlayerView
+        <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/player">
-        </com.google.android.youtube.player.YouTubePlayerView>
+            android:id="@+id/toolbar"
+            android:background="@color/default_color"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+            app:titleTextColor="@color/default_text_color">
+        </android.support.v7.widget.Toolbar>
+        <fragment
+            android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+            android:id="@+id/playerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
-            <android.support.v7.widget.AppCompatTextView
+            android:orientation="vertical">
+
+            <!--<android.support.v7.widget.LinearLayoutCompat-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:padding="5dp">-->
+                <!--<android.support.v7.widget.LinearLayoutCompat-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="0.3"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="vertical">-->
+                    <!--<ImageView-->
+                        <!--android:layout_width="40dp"-->
+                        <!--android:layout_height="40dp"-->
+                        <!--android:background="@drawable/ic_like"/>-->
+                    <!--<android.support.v7.widget.AppCompatTextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:id="@+id/tvCountLike"-->
+                        <!--android:textSize="15dp"/>-->
+                <!--</android.support.v7.widget.LinearLayoutCompat>-->
+                <!--<android.support.v7.widget.LinearLayoutCompat-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="0.3"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="vertical">-->
+                    <!--<ImageView-->
+                        <!--android:layout_width="40dp"-->
+                        <!--android:layout_height="40dp"-->
+                        <!--android:background="@drawable/ic_dislike"/>-->
+                    <!--<android.support.v7.widget.AppCompatTextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:id="@+id/tvCountDislike"-->
+                        <!--android:textSize="15dp"/>-->
+                <!--</android.support.v7.widget.LinearLayoutCompat>-->
+                <!--<android.support.v7.widget.LinearLayoutCompat-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="0.4"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="vertical">-->
+                    <!--<ImageView-->
+                        <!--android:layout_width="40dp"-->
+                        <!--android:layout_height="40dp"-->
+                        <!--android:background="@drawable/ic_view"/>-->
+                    <!--<android.support.v7.widget.AppCompatTextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:id="@+id/tvCountView"-->
+                        <!--android:textSize="15dp"/>-->
+                <!--</android.support.v7.widget.LinearLayoutCompat>-->
+            <!--</android.support.v7.widget.LinearLayoutCompat>-->
+
+            <!--Published-->
+            <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvVideoTitle"
-                android:textStyle="bold"
-                android:textSize="15dp"/>
-            <android.support.v7.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="20dp">
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                android:layout_marginTop="10dp">
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_weight="0.9"
                     android:layout_height="wrap_content"
-                    android:text="Published on "/>
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp">
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Published on "/>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvPublished"/>
+                </android.support.v7.widget.LinearLayoutCompat>
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_weight="0.1"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvPublished"/>
+                    android:gravity="center">
+                    <android.support.v7.widget.AppCompatImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ic_favorite_border"/>
+                </android.support.v7.widget.LinearLayoutCompat>
             </android.support.v7.widget.LinearLayoutCompat>
 
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Description"
-                android:layout_marginTop="20dp"/>
-            <android.support.v7.widget.AppCompatTextView
+            <!--Description-->
+            <com.luseen.autolinklibrary.AutoLinkTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tvDescription"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/background"
+                android:layout_marginTop="5dp"/>
+            <!--Comment-->
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rvListComment">
+            </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/load_more"
+                android:textAllCaps="false"
+                android:gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/btnLoadMore"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
         </android.support.v7.widget.LinearLayoutCompat>
     </android.support.v7.widget.LinearLayoutCompat>
-</android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>
