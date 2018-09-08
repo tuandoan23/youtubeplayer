@@ -2,4 +2,6 @@
     <string name="app_name">YoutubePlayer</string>
     <string name="load_more"><u>Load more...</u></string>
     <string name="error_load">An error occurred! Please check your internet!</string>
+    <string name="no_favourite_video">No favourite video</string>
+    <string name="no_history">No history</string>
 </resources>

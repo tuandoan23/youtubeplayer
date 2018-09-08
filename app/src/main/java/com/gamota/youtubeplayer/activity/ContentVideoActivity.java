@@ -4,20 +4,17 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
-import com.apkfuns.logutils.LogUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.CommentAdapter;
 import com.gamota.youtubeplayer.base.BaseActivity;
+import com.gamota.youtubeplayer.database.DBHelper;
 import com.gamota.youtubeplayer.model.comment.Item;
 import com.gamota.youtubeplayer.model.video.Video;
 import com.gamota.youtubeplayer.presenter.ContentVideoPresenter;
@@ -33,6 +30,7 @@ import com.luseen.autolinklibrary.AutoLinkTextView;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
@@ -46,8 +44,12 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     private String nextPageTokenComments="";
     private CommentAdapter commentAdapter;
     private ArrayList<Item> comments = new ArrayList<>();
+    private ArrayList<com.gamota.youtubeplayer.model.listvideomodel.Item> favouriteVideos = new ArrayList<>();
     private LinearLayoutManager commentLayoutManager;
+    private com.gamota.youtubeplayer.model.listvideomodel.Item video;
     private int commentCount;
+    public DBHelper db;
+    private boolean isFavourite = false;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -64,14 +66,21 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     @BindView(R.id.btnLoadMore)
     AppCompatButton btnLoadMore;
 
-//    @BindView(R.id.tvCountLike)
-//    AppCompatTextView tvCountLike;
-//
-//    @BindView(R.id.tvCountDislike)
-//    AppCompatTextView tvCountDislike;
-//
-//    @BindView(R.id.tvCountView)
-//    AppCompatTextView tvCountView;
+    @BindView(R.id.btnFavourite)
+    AppCompatImageButton btnFavourite;
+
+    @OnClick(R.id.btnFavourite)
+    void favourite(){
+        if (isFavourite){
+            isFavourite = false;
+            btnFavourite.setImageResource(R.drawable.ic_favorite_border);
+            db.deleteFavourite(video);
+        } else {
+            isFavourite = true;
+            btnFavourite.setImageResource(R.drawable.ic_favorite);
+            db.insertFavourite(video);
+        }
+    }
 
     @Override
     public int initLayout() {
@@ -80,6 +89,7 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
 
     @Override
     public void getExtraData() {
+        video = (com.gamota.youtubeplayer.model.listvideomodel.Item) getIntent().getExtras().getParcelable("video");
         videoId = getIntent().getStringExtra("videoId");
         videoTitle = getIntent().getStringExtra("videoTitle");
     }
@@ -123,6 +133,16 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
         commentAdapter = new CommentAdapter(comments, this);
         rvListCommnet.setLayoutManager(commentLayoutManager);
         rvListCommnet.setAdapter(commentAdapter);
+
+
+        db =  new DBHelper(this);
+        favouriteVideos = db.getAllFavourite();
+        for (int i = 0; i < favouriteVideos.size(); i++){
+            if (favouriteVideos.get(i).getId().getVideoId().equals(videoId)){
+                isFavourite = true;
+                btnFavourite.setImageResource(R.drawable.ic_favorite);
+            }
+        }
     }
 
     @Override
@@ -132,7 +152,6 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
                 finish();
                 ContentVideoActivity.this.overridePendingTransition(0,R.anim.comming_in);
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -148,9 +167,6 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
         if (!compositeDisposable.isDisposed()) {
             if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
                 tvPublished.setText(RFC3339ToDateString((video.getSnippet().getPublishedAt())));
-//                tvCountLike.setText(video.getStatistics().getLikeCount());
-//                tvCountDislike.setText(video.getStatistics().getDislikeCount());
-//                tvCountView.setText(video.getStatistics().getViewCount());
                 tvDescription.setText(video.getSnippet().getDescription());
                 tvDescription.setAutoLinkText(video.getSnippet().getDescription());
                 tvDescription.setAutoLinkOnClickListener(new AutoLinkOnClickListener() {

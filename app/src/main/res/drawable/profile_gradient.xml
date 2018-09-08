@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<shape xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:shape="rectangle">-->
-
-    <!--<gradient-->
-        <!--android:type="linear"-->
-        <!--android:startColor="#3DF0B0"-->
-        <!--android:endColor="#27e583"-->
-        <!--android:angle="270"/>-->
-<!--</shape>-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,17 +7,17 @@
             <gradient
                 android:type="linear"
                 android:startColor="#3DF0B0"
-                android:endColor="#27e583"
+                android:endColor="#2de890"
                 android:angle="270"/>
             <size
-                android:height="120dp"/>
+                android:height="90dp"/>
         </shape>
     </item>
-    <item android:top="115dp">
+    <item android:top="90dp">
         <shape>
             <solid android:color="#D2DADD" />
             <size
-                android:height="5dp" />
+                android:height="0dp" />
         </shape>
     </item>
 </layer-list>

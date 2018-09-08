@@ -1,44 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="15dp"
-        android:layout_marginLeft="15dp">
-        <android.support.v7.widget.AppCompatImageView
-            android:layout_height="35dp"
-            android:layout_width="35dp"
-            android:src="@drawable/ic_search"
-            android:layout_centerVertical="true"/>
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/inputText"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:hint="Search GameHub Video"
-            android:layout_alignParentLeft="true"
-            android:paddingLeft="40dp"/>
-    </RelativeLayout>
-
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <ProgressBar
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_gravity="center"
-        android:id="@+id/progressBar"
-        android:visibility="gone"/>
+        android:id="@+id/progressBar"/>
 
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:id="@+id/llError"
-        android:layout_gravity="center"
-        android:visibility="gone">
+        android:layout_gravity="center">
         <ImageView
             android:layout_width="70dp"
             android:layout_height="70dp"
@@ -55,26 +31,12 @@
 
     </android.support.v7.widget.LinearLayoutCompat>
 
-    <android.support.v7.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:visibility="gone"
-        android:id="@+id/llNoVideo">
-        <android.support.v7.widget.AppCompatTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No video found"
-            android:gravity="center"/>
-    </android.support.v7.widget.LinearLayoutCompat>
-
     <!--Swipe to load layout-->
     <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/swipeToLoadLayout"
-        android:background="@color/background_search"
+        android:background="@color/background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.gamota.youtubeplayer.loadlayout.RefreshHeaderView
@@ -82,13 +44,13 @@
             android:layout_width="match_parent"
             android:gravity="center"
             android:layout_height="50dp"
-            android:background="@color/background_search"/>
+            android:background="@color/background"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/swipe_target"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background_search"
+            android:background="@color/background"
             android:scrollbarStyle="insideOverlay"
             android:scrollbars="vertical"/>
 
@@ -97,7 +59,7 @@
             android:layout_width="match_parent"
             android:gravity="center"
             android:layout_height="50dp"
-            android:background="@color/background_search"/>
+            android:background="@color/background"/>
 
     </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
 
@@ -105,13 +67,11 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
+        android:layout_gravity="end|center"
         android:src="@drawable/ic_totop"
         android:layout_margin="16dp"
         app:elevation="3dp"
         app:fabSize="mini"
         app:backgroundTint="@color/default_text_color"
-        android:elevation="3dp"
-        android:visibility="gone"/>
-
-</android.support.v7.widget.LinearLayoutCompat>
+        android:elevation="3dp" />
+</android.support.design.widget.CoordinatorLayout>

@@ -10,9 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.apkfuns.logutils.LogUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.activity.ContentVideoActivity;
+import com.gamota.youtubeplayer.activity.MainActivity;
+import com.gamota.youtubeplayer.database.DBHelper;
 import com.gamota.youtubeplayer.model.listvideomodel.Item;
 
 import java.util.ArrayList;
@@ -23,10 +26,12 @@ import butterknife.ButterKnife;
 public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     private ArrayList<Item> arrayListVideo;
     private Context context;
+    private DBHelper db;
 
     public VideoAdapter(ArrayList<Item> items, Context context) {
         arrayListVideo = items;
         this.context = context;
+        db = new DBHelper(context);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -66,12 +71,16 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String videoId = video.getVideoId().getVideoId();
+                Item item = arrayListVideo.get(position);
+                db.insertRecently(item);
+                ArrayList<Item> items = db.getAllRecently();
+                String videoId = video.getId().getVideoId();
                 String videoTitle = video.getSnippet().getTitle();
 
                 Intent newIntent = new Intent(context, ContentVideoActivity.class );
                 newIntent.putExtra("videoId", videoId);
                 newIntent.putExtra("videoTitle", videoTitle);
+                newIntent.putExtra("video", item);
                 context.startActivity(newIntent);
             }
         });

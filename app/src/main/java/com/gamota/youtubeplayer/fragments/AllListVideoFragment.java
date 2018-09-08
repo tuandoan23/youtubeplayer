@@ -1,37 +1,28 @@
-package com.gamota.youtubeplayer.activity;
+package com.gamota.youtubeplayer.fragments;
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.apkfuns.logutils.LogUtils;
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.VideoAdapter;
-import com.gamota.youtubeplayer.base.BaseActivity;
+import com.gamota.youtubeplayer.base.BaseFragment;
 import com.gamota.youtubeplayer.model.listvideomodel.Item;
-import com.gamota.youtubeplayer.presenter.SearchViewPresenter;
-import com.gamota.youtubeplayer.presenteriplm.SearchViewPresenterIplm;
-import com.gamota.youtubeplayer.view.SearchView;
+import com.gamota.youtubeplayer.presenter.ListVideoPresenter;
+import com.gamota.youtubeplayer.presenteriplm.ListVideoPresenterIplm;
+import com.gamota.youtubeplayer.view.ListVideoView;
 
 import java.util.ArrayList;
-import java.util.logging.Handler;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 
@@ -40,42 +31,33 @@ import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static com.gamota.youtubeplayer.utils.Utils.API_KEY;
 import static com.gamota.youtubeplayer.utils.Utils.CHANNEL_ID;
 
-public class SearchActivity extends BaseActivity implements SearchView, OnLoadMoreListener, OnRefreshListener {
-    private SearchViewPresenter searchViewPresenter;
+public class AllListVideoFragment extends BaseFragment implements ListVideoView,OnLoadMoreListener, OnRefreshListener, AppBarLayout.OnOffsetChangedListener {
+    private boolean refreshing = false;
+    private boolean loading = false;
     private String nextPageToken = "";
     private VideoAdapter videoAdapter;
+    private ListVideoPresenter listVideoPresenter;
     private ArrayList<Item> items = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
     private GridLayoutManager gridLayoutManager;
-    private boolean refreshing = false;
-    private boolean loading = false;
-    private boolean isNewSearch = false;
-    private String q ="";
 
     @BindView(R.id.swipeToLoadLayout)
     SwipeToLoadLayout swipeToLoadLayout;
 
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
-
     @BindView(R.id.swipe_target)
     RecyclerView rvListVideo;
 
-    @BindView(R.id.inputText)
-    TextInputEditText inputText;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     @BindView(R.id.llError)
     LinearLayoutCompat llError;
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
-
-    @BindView(R.id.llNoVideo)
-    LinearLayoutCompat llNoVideo;
-
     @Override
     public int initLayout() {
-        return R.layout.activity_search;
+        return R.layout.fragment_all_video;
     }
 
     @Override
@@ -85,24 +67,22 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
 
     @Override
     public void createPresenter() {
-        searchViewPresenter = new SearchViewPresenterIplm(this, compositeDisposable);
+        listVideoPresenter = new ListVideoPresenterIplm(this, compositeDisposable);
     }
 
     @Override
     public void createAdapter() {
-        swipeToLoadLayout.setVisibility(View.GONE);
-        llError.setVisibility(View.GONE);
         swipeToLoadLayout.setOnRefreshListener(this);
         swipeToLoadLayout.setOnLoadMoreListener(this);
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == ORIENTATION_PORTRAIT) {
-            linearLayoutManager = new LinearLayoutManager(this);
+            linearLayoutManager = new LinearLayoutManager(this.getContext());
             rvListVideo.setLayoutManager(linearLayoutManager);
         } else if (orientation == ORIENTATION_LANDSCAPE){
-            gridLayoutManager = new GridLayoutManager(this, 2);
+            gridLayoutManager = new GridLayoutManager(this.getContext(), 2);
             rvListVideo.setLayoutManager(gridLayoutManager);
         }
-        videoAdapter = new VideoAdapter(items, this);
+        videoAdapter = new VideoAdapter(items, this.getContext());
         rvListVideo.setAdapter(videoAdapter);
         setOnScrollListener();
         fab.setOnClickListener(new View.OnClickListener() {
@@ -115,63 +95,15 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
 
     @Override
     public void loadData() {
-        inputText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                nextPageToken = "";
-                isNewSearch = true;
-                (new android.os.Handler()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        String input = charSequence.toString().trim();
-                        q = replaceWithPattern(input, "+");
-                    }
-                }, 2000);
-                LogUtils.d(q);
-                if (!q.equals("")) {
-                    searchViewPresenter.searchVideo(CHANNEL_ID, API_KEY, nextPageToken, q);
-                } else {
-                    items.clear();
-                    videoAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    public String replaceWithPattern(String str,String replace){
-        Pattern ptn = Pattern.compile("\\s+");
-        Matcher mtch = ptn.matcher(str);
-        return mtch.replaceAll(replace);
+        listVideoPresenter.getListVideo(CHANNEL_ID, API_KEY, nextPageToken);
     }
 
     @Override
-    public void searchVideoSuccess(ArrayList<Item> items, String nextPageToken) {
+    public void getListVideoSuccess(ArrayList<Item> items, String nextPageToken, String totalResults) {
         if (!compositeDisposable.isDisposed()) {
             progressBar.setVisibility(View.GONE);
-            if (items.size() == 0){
-                llNoVideo.setVisibility(View.VISIBLE);
-                swipeToLoadLayout.setVisibility(View.GONE);
-            } else {
-                llNoVideo.setVisibility(View.GONE);
-                swipeToLoadLayout.setVisibility(View.VISIBLE);
-            }
-            if (isNewSearch){
-                this.items.clear();
-                videoAdapter.notifyDataSetChanged();
-            }
-            isNewSearch = false;
-            llError.setVisibility(View.GONE);
             swipeToLoadLayout.setVisibility(View.VISIBLE);
+            llError.setVisibility(View.GONE);
             if (loading)
                 loading = false;
             if (refreshing){
@@ -188,18 +120,18 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
             this.nextPageToken = nextPageToken;
             this.items.addAll(items);
             videoAdapter.notifyDataSetChanged();
-//            if (nextPageToken == null)
-//                Toast.makeText(getApplicationContext(),"Loaded all videos",Toast.LENGTH_LONG ).show();
+            if (nextPageToken == null)
+                Toast.makeText(this.getContext(),"Loaded all videos",Toast.LENGTH_LONG ).show();
         }
     }
 
     @Override
-    public void searchVideoError() {
+    public void getListVideoError() {
         if (!compositeDisposable.isDisposed()){
             if (refreshing){
-                Toast.makeText(this,"Connection failed! Cannot refresh video!",Toast.LENGTH_LONG ).show();
+                Toast.makeText(this.getContext(),"Connection failed! Cannot refresh video!",Toast.LENGTH_LONG ).show();
             } else if (loading){
-                Toast.makeText(this,"Connection failed! Cannot load video!",Toast.LENGTH_LONG ).show();
+                Toast.makeText(this.getContext(),"Connection failed! Cannot load video!",Toast.LENGTH_LONG ).show();
             } else if (nextPageToken == "") {
                 progressBar.setVisibility(View.GONE);
                 llError.setVisibility(View.VISIBLE);
@@ -236,9 +168,9 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
                 swipeToLoadLayout.setLoadingMore(false);
                 loading = true;
                 if (nextPageToken != null) {
-                    searchViewPresenter.searchVideo(CHANNEL_ID, API_KEY, nextPageToken, q);
+                    listVideoPresenter.getListVideo(CHANNEL_ID, API_KEY, nextPageToken);
                 } else {
-                    Toast.makeText(getApplicationContext(),"Loaded all videos",Toast.LENGTH_LONG ).show();
+                    Toast.makeText(getContext(),"Loaded all videos",Toast.LENGTH_LONG ).show();
                 }
             }
         }, 1500);
@@ -251,8 +183,14 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
             public void run() {
                 swipeToLoadLayout.setRefreshing(false);
                 refreshing = true;
-                searchViewPresenter.searchVideo(CHANNEL_ID, API_KEY,"", q);
+                listVideoPresenter.getListVideo(CHANNEL_ID, API_KEY,"");
             }
         }, 1500);
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        if (!swipeToLoadLayout.isRefreshing())
+            swipeToLoadLayout.setRefreshEnabled(verticalOffset==0);
     }
 }
