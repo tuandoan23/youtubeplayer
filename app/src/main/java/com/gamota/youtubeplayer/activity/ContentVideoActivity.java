@@ -80,6 +80,10 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
             btnFavourite.setImageResource(R.drawable.ic_favorite);
             db.insertFavourite(video);
         }
+
+        if (getIntent().getBooleanExtra("favourite", false)){
+
+        }
     }
 
     @Override

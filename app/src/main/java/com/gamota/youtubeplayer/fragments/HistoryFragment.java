@@ -3,6 +3,7 @@ package com.gamota.youtubeplayer.fragments;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -93,7 +94,7 @@ public class HistoryFragment extends BaseFragment implements OnLoadMoreListener,
             gridLayoutManager = new GridLayoutManager(this.getContext(), 2);
             rvListVideo.setLayoutManager(gridLayoutManager);
         }
-        videoAdapter = new VideoAdapter(items, this.getContext());
+        videoAdapter = new VideoAdapter(items, this.getContext(), (Fragment) this);
         rvListVideo.setAdapter(videoAdapter);
     }
 

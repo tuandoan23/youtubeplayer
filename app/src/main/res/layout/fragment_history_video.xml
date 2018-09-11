@@ -63,5 +63,6 @@
         app:elevation="3dp"
         app:fabSize="mini"
         app:backgroundTint="@color/default_text_color"
-        android:elevation="3dp" />
+        android:elevation="3dp"
+        android:visibility="gone"/>
 </android.support.design.widget.CoordinatorLayout>

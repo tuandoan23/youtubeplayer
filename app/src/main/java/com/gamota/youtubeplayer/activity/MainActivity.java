@@ -50,7 +50,7 @@ import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static com.gamota.youtubeplayer.utils.Utils.API_KEY;
 import static com.gamota.youtubeplayer.utils.Utils.CHANNEL_ID;
 
-public class MainActivity extends BaseActivity implements MainView, ViewPager.OnPageChangeListener {
+public class MainActivity extends BaseActivity implements MainView{
     private MainViewPresenter mainViewPresenter;
     private AllListVideoFragment allVideoFragment;
     private HistoryFragment historyFragment;
@@ -149,12 +149,6 @@ public class MainActivity extends BaseActivity implements MainView, ViewPager.On
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-//                if (tab.getPosition() == 1){
-//                    ((FavouriteFragment) viewPagerAdapter.getItem(tab.getPosition())).refreshData();
-//                } else if (tab.getPosition() == 2){
-//                    ((HistoryFragment) viewPagerAdapter.getItem(tab.getPosition())).refreshData();
-//                }
-
                 FragmentManager fm = getSupportFragmentManager();
                 Fragment fragment = fm.findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + tab.getPosition());
                 if (fragment instanceof FavouriteFragment){
@@ -192,28 +186,6 @@ public class MainActivity extends BaseActivity implements MainView, ViewPager.On
         viewPagerAdapter.addFragment(favouriteFragment, "Favourites");
         viewPagerAdapter.addFragment(historyFragment, "History");
         viewPager.setOffscreenPageLimit(10);
-//        viewPager.addOnPageChangeListener(this);
         viewPager.setAdapter(viewPagerAdapter);
-    }
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        LogUtils.d("po: " + position);
-        LogUtils.d(viewPagerAdapter.getItem(position));
-        switch (position){
-            case 0:((AllListVideoFragment) viewPagerAdapter.getItem(position)).onRefresh();
-            case 1: ((FavouriteFragment) viewPagerAdapter.getItem(position)).refreshData();
-//            case 2: ((HistoryFragment) viewPagerAdapter.getItem(position)).ref
-        }
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
     }
 }

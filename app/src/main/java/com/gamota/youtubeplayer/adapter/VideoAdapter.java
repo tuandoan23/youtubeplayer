@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.activity.ContentVideoActivity;
 import com.gamota.youtubeplayer.activity.MainActivity;
 import com.gamota.youtubeplayer.database.DBHelper;
+import com.gamota.youtubeplayer.fragments.FavouriteFragment;
+import com.gamota.youtubeplayer.fragments.HistoryFragment;
 import com.gamota.youtubeplayer.model.listvideomodel.Item;
 
 import java.util.ArrayList;
@@ -26,11 +29,13 @@ import butterknife.ButterKnife;
 public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     private ArrayList<Item> arrayListVideo;
     private Context context;
+    private Fragment fragment;
     private DBHelper db;
 
-    public VideoAdapter(ArrayList<Item> items, Context context) {
+    public VideoAdapter(ArrayList<Item> items, Context context, Fragment fragment) {
         arrayListVideo = items;
         this.context = context;
+        this.fragment = fragment;
         db = new DBHelper(context);
     }
 
@@ -73,22 +78,25 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             public void onClick(View view) {
                 Item item = arrayListVideo.get(position);
                 db.insertRecently(item);
-                ArrayList<Item> items = db.getAllRecently();
                 String videoId = video.getId().getVideoId();
                 String videoTitle = video.getSnippet().getTitle();
-
                 Intent newIntent = new Intent(context, ContentVideoActivity.class );
                 newIntent.putExtra("videoId", videoId);
                 newIntent.putExtra("videoTitle", videoTitle);
                 newIntent.putExtra("video", item);
+                if (fragment instanceof FavouriteFragment){
+                    newIntent.putExtra("favourite", true);
+                }
                 context.startActivity(newIntent);
+                if (fragment instanceof HistoryFragment){
+                    ((HistoryFragment) fragment).refreshData();
+                }
             }
         });
     }
 
     @Override
     public int getItemCount() {
-
         return arrayListVideo.size();
     }
 }

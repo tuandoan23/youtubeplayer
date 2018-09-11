@@ -102,7 +102,7 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
             gridLayoutManager = new GridLayoutManager(this, 2);
             rvListVideo.setLayoutManager(gridLayoutManager);
         }
-        videoAdapter = new VideoAdapter(items, this);
+        videoAdapter = new VideoAdapter(items, this, null);
         rvListVideo.setAdapter(videoAdapter);
         setOnScrollListener();
         fab.setOnClickListener(new View.OnClickListener() {
