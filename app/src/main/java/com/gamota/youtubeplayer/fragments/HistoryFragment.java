@@ -18,7 +18,12 @@ import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.VideoAdapter;
 import com.gamota.youtubeplayer.base.BaseFragment;
 import com.gamota.youtubeplayer.database.DBHelper;
+import com.gamota.youtubeplayer.event.MessageEvent;
 import com.gamota.youtubeplayer.model.listvideomodel.Item;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -68,6 +73,7 @@ public class HistoryFragment extends BaseFragment implements OnLoadMoreListener,
         setOnScrollListener();
         swipeToLoadLayout.setOnLoadMoreListener(this);
         swipeToLoadLayout.setOnRefreshListener(this);
+        EventBus.getDefault().register(this);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,5 +159,18 @@ public class HistoryFragment extends BaseFragment implements OnLoadMoreListener,
                 refreshData();
             }
         }, 1500);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        if (event.dataChanged){
+            this.refreshData();
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

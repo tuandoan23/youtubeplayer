@@ -75,6 +75,9 @@ public class MainActivity extends BaseActivity implements MainView{
     @BindView(R.id.tabs)
     TabLayout tabs;
 
+    @BindView(R.id.llError)
+    LinearLayoutCompat llError;
+
     @OnClick(R.id.imgSearch)
     void search(){
         Intent searchIntent = new Intent(this, SearchActivity.class);
@@ -93,10 +96,8 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void getChannelInfoError() {
         if (!compositeDisposable.isDisposed()){
-//            swipeToLoadLayout.setVisibility(View.GONE);
-//            progressBar.setVisibility(View.GONE);
-//            llError.setVisibility(View.VISIBLE);
-//            fab.setVisibility(View.GONE);
+            llError.setVisibility(View.VISIBLE);
+            viewPager.setVisibility(View.GONE);
         }
     }
 

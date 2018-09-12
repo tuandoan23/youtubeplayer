@@ -7,9 +7,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.apkfuns.logutils.LogUtils;
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
@@ -17,7 +19,12 @@ import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.VideoAdapter;
 import com.gamota.youtubeplayer.base.BaseFragment;
 import com.gamota.youtubeplayer.database.DBHelper;
+import com.gamota.youtubeplayer.event.MessageEvent;
 import com.gamota.youtubeplayer.model.listvideomodel.Item;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -74,6 +81,7 @@ public class FavouriteFragment extends BaseFragment implements OnLoadMoreListene
                 rvListVideo.smoothScrollToPosition(0);
             }
         });
+        EventBus.getDefault().register(this);
     }
 
     public void refreshData(){
@@ -154,5 +162,18 @@ public class FavouriteFragment extends BaseFragment implements OnLoadMoreListene
                 refreshData();
             }
         }, 1500);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        if (event.dataChanged){
+            this.refreshData();
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

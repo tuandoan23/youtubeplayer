@@ -11,10 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import com.apkfuns.logutils.LogUtils;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.CommentAdapter;
 import com.gamota.youtubeplayer.base.BaseActivity;
 import com.gamota.youtubeplayer.database.DBHelper;
+import com.gamota.youtubeplayer.event.MessageEvent;
+import com.gamota.youtubeplayer.fragments.FavouriteFragment;
 import com.gamota.youtubeplayer.model.comment.Item;
 import com.gamota.youtubeplayer.model.video.Video;
 import com.gamota.youtubeplayer.presenter.ContentVideoPresenter;
@@ -26,6 +31,8 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.luseen.autolinklibrary.AutoLinkMode;
 import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.luseen.autolinklibrary.AutoLinkTextView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -69,6 +76,9 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     @BindView(R.id.btnFavourite)
     AppCompatImageButton btnFavourite;
 
+    @BindView(R.id.publishedOn)
+    AppCompatTextView publishedOn;
+
     @OnClick(R.id.btnFavourite)
     void favourite(){
         if (isFavourite){
@@ -80,10 +90,13 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
             btnFavourite.setImageResource(R.drawable.ic_favorite);
             db.insertFavourite(video);
         }
+        EventBus.getDefault().post(new MessageEvent(true));
+    }
 
-        if (getIntent().getBooleanExtra("favourite", false)){
-
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -128,7 +141,6 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
             }
             @Override
             public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-
             }
         });
 
@@ -170,6 +182,8 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     public void getVideoSuccess(Video video) {
         if (!compositeDisposable.isDisposed()) {
             if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+                publishedOn.setVisibility(View.VISIBLE);
+                btnFavourite.setVisibility(View.VISIBLE);
                 tvPublished.setText(RFC3339ToDateString((video.getSnippet().getPublishedAt())));
                 tvDescription.setText(video.getSnippet().getDescription());
                 tvDescription.setAutoLinkText(video.getSnippet().getDescription());
@@ -204,7 +218,7 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     @Override
     public void getVideoError() {
         if (!compositeDisposable.isDisposed()) {
-
+            Toast.makeText(this, "Failed to load video's info. \n Please restart app!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -230,7 +244,7 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     @Override
     public void getListCommentError() {
         if (!compositeDisposable.isDisposed()) {
-
+            Toast.makeText(this, "Failed to load comments. \n Please check your internet!", Toast.LENGTH_SHORT).show();
         }
     }
 }

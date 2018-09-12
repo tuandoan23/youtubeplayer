@@ -17,9 +17,12 @@ import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.activity.ContentVideoActivity;
 import com.gamota.youtubeplayer.activity.MainActivity;
 import com.gamota.youtubeplayer.database.DBHelper;
+import com.gamota.youtubeplayer.event.MessageEvent;
 import com.gamota.youtubeplayer.fragments.FavouriteFragment;
 import com.gamota.youtubeplayer.fragments.HistoryFragment;
 import com.gamota.youtubeplayer.model.listvideomodel.Item;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -88,9 +91,10 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     newIntent.putExtra("favourite", true);
                 }
                 context.startActivity(newIntent);
-                if (fragment instanceof HistoryFragment){
-                    ((HistoryFragment) fragment).refreshData();
-                }
+//                if (fragment instanceof HistoryFragment){
+//                    ((HistoryFragment) fragment).refreshData();
+//                }
+                EventBus.getDefault().post(new MessageEvent(true));
             }
         });
     }

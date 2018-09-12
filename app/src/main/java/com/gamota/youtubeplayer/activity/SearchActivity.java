@@ -125,6 +125,7 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 nextPageToken = "";
                 isNewSearch = true;
+                progressBar.setVisibility(View.VISIBLE);
                 (new android.os.Handler()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -143,7 +144,6 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
 
             @Override
             public void afterTextChanged(Editable editable) {
-                progressBar.setVisibility(View.GONE);
             }
         });
     }
