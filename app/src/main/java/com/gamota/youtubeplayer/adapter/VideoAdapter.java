@@ -2,6 +2,7 @@ package com.gamota.youtubeplayer.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.apkfuns.logutils.LogUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.gamota.youtubeplayer.R;
@@ -21,6 +24,7 @@ import com.gamota.youtubeplayer.event.MessageEvent;
 import com.gamota.youtubeplayer.fragments.FavouriteFragment;
 import com.gamota.youtubeplayer.fragments.HistoryFragment;
 import com.gamota.youtubeplayer.model.listvideomodel.Item;
+import com.gamota.youtubeplayer.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -34,11 +38,13 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private Context context;
     private Fragment fragment;
     private DBHelper db;
+    private boolean isYoutubeInstalled;
 
     public VideoAdapter(ArrayList<Item> items, Context context, Fragment fragment) {
         arrayListVideo = items;
         this.context = context;
         this.fragment = fragment;
+        isYoutubeInstalled = Utils.isAppInstalled(Utils.packageName, fragment);
         db = new DBHelper(context);
     }
 
@@ -90,13 +96,44 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 if (fragment instanceof FavouriteFragment){
                     newIntent.putExtra("favourite", true);
                 }
-                context.startActivity(newIntent);
-//                if (fragment instanceof HistoryFragment){
-//                    ((HistoryFragment) fragment).refreshData();
-//                }
-                EventBus.getDefault().post(new MessageEvent(true));
+                if (isYoutubeInstalled) {
+                    context.startActivity(newIntent);
+                    EventBus.getDefault().post(new MessageEvent(true));
+                } else {
+                    installSuggestDialog();
+                }
             }
         });
+    }
+
+    private void installSuggestDialog(){
+        new MaterialDialog.Builder(fragment.getContext())
+                .title(R.string.title_dialog)
+                .content(R.string.content)
+                .positiveText("Yes")
+                .negativeText("No")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        openPlayStore();
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+
+    }
+
+    private void openPlayStore(){
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + Utils.packageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + Utils.packageName)));
+        }
     }
 
     @Override
