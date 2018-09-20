@@ -55,6 +55,7 @@ public class AllListVideoFragment extends BaseFragment implements ListVideoView,
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
     @Override
     public int initLayout() {
         return R.layout.fragment_all_video;

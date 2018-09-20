@@ -50,7 +50,7 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
     private boolean refreshing = false;
     private boolean loading = false;
     private boolean isNewSearch = false;
-    private String q ="";
+    private String q = "";
 
     @BindView(R.id.swipeToLoadLayout)
     SwipeToLoadLayout swipeToLoadLayout;
@@ -150,8 +150,8 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
 
     public String replaceWithPattern(String str,String replace){
         Pattern ptn = Pattern.compile("\\s+");
-        Matcher mtch = ptn.matcher(str);
-        return mtch.replaceAll(replace);
+        Matcher matcher = ptn.matcher(str);
+        return matcher.replaceAll(replace);
     }
 
     @Override

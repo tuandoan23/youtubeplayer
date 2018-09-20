@@ -94,12 +94,6 @@ public class ContentVideoActivity extends BaseActivity implements ContentVideoVi
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-//        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
     public int initLayout() {
         return R.layout.activity_video;
     }

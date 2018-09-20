@@ -38,8 +38,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "+
                 COLUMN_DATA + " BLOB NOT NULL" +
                 ")";
-        LogUtils.d(createRecentlyTableQuery);
-        LogUtils.d(createFavouriteTableQuery);
         sqLiteDatabase.execSQL(createFavouriteTableQuery);
         sqLiteDatabase.execSQL(createRecentlyTableQuery);
     }
@@ -105,9 +103,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 items.add(item);
             } while (cursor.moveToNext());
         }
-
         sqlDB.close();
-
         return items;
     }
 
@@ -135,7 +131,6 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         Gson gson = new Gson();
         ContentValues values = new ContentValues();
-
         values.put(COLUMN_DATA, gson.toJson(item).getBytes());
         sqlDB.delete(FAVOURITE_TABLE,COLUMN_VIDEO_ID + " = ?", new String[] { String.valueOf(item.getId().getVideoId()) });
     }

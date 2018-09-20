@@ -8,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.gamota.youtubeplayer.R;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.disposables.CompositeDisposable;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public abstract class BaseFragment extends Fragment {
     private Unbinder unbinder;
@@ -41,6 +44,8 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unbinder.unbind();
+        compositeDisposable.dispose();
     }
 }
 
