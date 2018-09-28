@@ -100,7 +100,7 @@ public class HistoryFragment extends BaseFragment implements OnLoadMoreListener,
             gridLayoutManager = new GridLayoutManager(this.getContext(), 2);
             rvListVideo.setLayoutManager(gridLayoutManager);
         }
-        videoAdapter = new VideoAdapter(items, this.getContext(), (Fragment) this);
+        videoAdapter = new VideoAdapter(items, this.getContext(), this.getActivity());
         rvListVideo.setAdapter(videoAdapter);
     }
 

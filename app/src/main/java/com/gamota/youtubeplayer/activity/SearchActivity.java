@@ -3,6 +3,7 @@ package com.gamota.youtubeplayer.activity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -102,7 +103,7 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
             gridLayoutManager = new GridLayoutManager(this, 2);
             rvListVideo.setLayoutManager(gridLayoutManager);
         }
-        videoAdapter = new VideoAdapter(items, this, null);
+        videoAdapter = new VideoAdapter(items, this, this);
         rvListVideo.setAdapter(videoAdapter);
         setOnScrollListener();
         fab.setOnClickListener(new View.OnClickListener() {

@@ -1,5 +1,6 @@
 package com.gamota.youtubeplayer.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -36,15 +37,21 @@ import butterknife.ButterKnife;
 public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     private ArrayList<Item> arrayListVideo;
     private Context context;
-    private Fragment fragment;
+    private Activity activity;
+//    private Fragment fragment;
     private DBHelper db;
     private boolean isYoutubeInstalled;
 
-    public VideoAdapter(ArrayList<Item> items, Context context, Fragment fragment) {
+    public VideoAdapter(ArrayList<Item> items, Context context, Activity activity) {
         arrayListVideo = items;
         this.context = context;
-        this.fragment = fragment;
-        isYoutubeInstalled = Utils.isAppInstalled(Utils.packageName, fragment);
+        this.activity = activity;
+//        this.fragment = fragment;
+//        if (fragment != null) {
+//            isYoutubeInstalled = Utils.isAppInstalled(Utils.packageName, fragment.getActivity().getPackageManager());
+//        } else {
+            isYoutubeInstalled = Utils.isAppInstalled(Utils.packageName, activity.getPackageManager());
+//        }
         db = new DBHelper(context);
     }
 
@@ -93,9 +100,6 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 newIntent.putExtra("videoId", videoId);
                 newIntent.putExtra("videoTitle", videoTitle);
                 newIntent.putExtra("video", item);
-                if (fragment instanceof FavouriteFragment){
-                    newIntent.putExtra("favourite", true);
-                }
                 if (isYoutubeInstalled) {
                     context.startActivity(newIntent);
                     EventBus.getDefault().post(new MessageEvent(true));
@@ -107,7 +111,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private void installSuggestDialog(){
-        new MaterialDialog.Builder(fragment.getContext())
+        new MaterialDialog.Builder(context)
                 .title(R.string.title_dialog)
                 .content(R.string.content)
                 .positiveText("Yes")

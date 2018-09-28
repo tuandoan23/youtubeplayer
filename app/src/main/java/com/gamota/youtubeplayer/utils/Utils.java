@@ -1,6 +1,8 @@
 package com.gamota.youtubeplayer.utils;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 
 import com.apkfuns.logutils.LogUtils;
@@ -68,8 +70,8 @@ public class Utils {
         return dateTime;
     }
 
-    public static boolean isAppInstalled(String packageName, Fragment fragment) {
-        Intent mIntent = fragment.getActivity().getPackageManager().getLaunchIntentForPackage(packageName);
+    public static boolean isAppInstalled(String packageName, PackageManager packageManager) {
+        Intent mIntent = packageManager.getLaunchIntentForPackage(packageName);
         if (mIntent != null) {
             return true;
         }

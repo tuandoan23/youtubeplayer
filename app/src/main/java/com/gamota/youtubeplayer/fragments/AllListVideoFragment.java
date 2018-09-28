@@ -83,7 +83,7 @@ public class AllListVideoFragment extends BaseFragment implements ListVideoView,
             gridLayoutManager = new GridLayoutManager(this.getContext(), 2);
             rvListVideo.setLayoutManager(gridLayoutManager);
         }
-        videoAdapter = new VideoAdapter(items, this.getContext(), this);
+        videoAdapter = new VideoAdapter(items, this.getContext(), this.getActivity());
         rvListVideo.setAdapter(videoAdapter);
         setOnScrollListener();
         fab.setOnClickListener(new View.OnClickListener() {

@@ -102,7 +102,7 @@ public class FavouriteFragment extends BaseFragment implements OnLoadMoreListene
             gridLayoutManager = new GridLayoutManager(this.getContext(), 2);
             rvListVideo.setLayoutManager(gridLayoutManager);
         }
-        videoAdapter = new VideoAdapter(items, this.getContext(), this);
+        videoAdapter = new VideoAdapter(items, this.getContext(), this.getActivity());
         rvListVideo.setAdapter(videoAdapter);
     }
 
