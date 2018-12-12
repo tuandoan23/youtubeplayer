@@ -1,13 +1,17 @@
 package com.gamota.youtubeplayer.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
@@ -56,6 +60,7 @@ public class MainActivity extends BaseActivity implements MainView{
     private HistoryFragment historyFragment;
     private FavouriteFragment favouriteFragment;
     private ViewPagerAdapter viewPagerAdapter;
+    private static final int REQUEST_PERMISSION_CODE = 123;
 
     @BindView(R.id.viewPager)
     ViewPager viewPager;
@@ -108,7 +113,9 @@ public class MainActivity extends BaseActivity implements MainView{
 
     @Override
     public void getExtraData() {
-
+        if (!checkPermissionOnDevice()){
+            requestPermision();
+        }
     }
 
     @Override
@@ -163,5 +170,31 @@ public class MainActivity extends BaseActivity implements MainView{
 
         viewPager.setOffscreenPageLimit(10);
         viewPager.setAdapter(viewPagerAdapter);
+    }
+
+    private void requestPermision() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.INTERNET
+        }, REQUEST_PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case REQUEST_PERMISSION_CODE:
+            {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+            break;
+        }
+    }
+
+    private boolean checkPermissionOnDevice() {
+        int internet_result = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
+        return internet_result == PackageManager.PERMISSION_GRANTED;
     }
 }
