@@ -1,10 +1,18 @@
 package com.gamota.youtubeplayer.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -22,13 +30,16 @@ import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.adapter.VideoAdapter;
+import com.gamota.youtubeplayer.adapter.ViewPagerAdapter;
 import com.gamota.youtubeplayer.base.BaseActivity;
+import com.gamota.youtubeplayer.fragments.AllListVideoFragment;
+import com.gamota.youtubeplayer.fragments.FavouriteFragment;
+import com.gamota.youtubeplayer.fragments.HistoryFragment;
 import com.gamota.youtubeplayer.model.channel.ChannelInfo;
 import com.gamota.youtubeplayer.model.listvideomodel.Item;
 import com.gamota.youtubeplayer.presenter.MainViewPresenter;
 import com.gamota.youtubeplayer.presenteriplm.MainViewPresenterIplm;
 import com.gamota.youtubeplayer.view.MainView;
-import com.gamota.youtubeplayer.view.SearchView;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -43,27 +54,22 @@ import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static com.gamota.youtubeplayer.utils.Utils.API_KEY;
 import static com.gamota.youtubeplayer.utils.Utils.CHANNEL_ID;
 
-public class MainActivity extends BaseActivity implements MainView, OnRefreshListener, OnLoadMoreListener,AppBarLayout.OnOffsetChangedListener {
+public class MainActivity extends BaseActivity implements MainView{
     private MainViewPresenter mainViewPresenter;
-    private String nextPageToken = "";
-    private VideoAdapter videoAdapter;
-    private ArrayList<Item> items = new ArrayList<>();
-    private LinearLayoutManager linearLayoutManager;
-    private GridLayoutManager gridLayoutManager;
-    private boolean refreshing = false;
-    private boolean loading = false;
+    private AllListVideoFragment allVideoFragment;
+    private HistoryFragment historyFragment;
+    private FavouriteFragment favouriteFragment;
+    private ViewPagerAdapter viewPagerAdapter;
+    private static final int REQUEST_PERMISSION_CODE = 123;
+
+    @BindView(R.id.viewPager)
+    ViewPager viewPager;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @BindView(R.id.swipeToLoadLayout)
-    SwipeToLoadLayout swipeToLoadLayout;
-
     @BindView(R.id.appBar)
     AppBarLayout appBar;
-
-    @BindView(R.id.swipe_target)
-    RecyclerView rvListVideo;
 
     @BindView(R.id.tvChannelTitle)
     AppCompatTextView tvChannelTitle;
@@ -71,14 +77,11 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
     @BindView(R.id.imgChannelIcon)
     SimpleDraweeView imgChannelIcon;
 
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
+    @BindView(R.id.tabs)
+    TabLayout tabs;
 
     @BindView(R.id.llError)
     LinearLayoutCompat llError;
-
-    @BindView(R.id.progressBar)
-    ProgressBar progressBar;
 
     @OnClick(R.id.imgSearch)
     void search(){
@@ -92,44 +95,15 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
             tvChannelTitle.setText(channelInfo.getSnippet().getTitle().toString());
             Uri uri = Uri.parse(channelInfo.getSnippet().getThumbnails().getDefault().getUrl().toString());
             imgChannelIcon.setImageURI(uri);
-            mainViewPresenter.getListVideo(CHANNEL_ID, API_KEY, nextPageToken);
         }
     }
 
     @Override
     public void getChannelInfoError() {
         if (!compositeDisposable.isDisposed()){
-            swipeToLoadLayout.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
             llError.setVisibility(View.VISIBLE);
-            fab.setVisibility(View.GONE);
+            viewPager.setVisibility(View.GONE);
         }
-    }
-
-    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
-    static {
-        suffixes.put(1_000L, "K");
-        suffixes.put(1_000_000L, "M");
-        suffixes.put(1_000_000_000L, "B");
-        suffixes.put(1_000_000_000_000L, "T");
-        suffixes.put(1_000_000_000_000_000L, "P");
-        suffixes.put(1_000_000_000_000_000_000L, "E");
-    }
-
-    public static String format(long value) {
-        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
-        if (value == Long.MIN_VALUE) return format(Long.MIN_VALUE + 1);
-        if (value < 0) return "-" + format(-value);
-        if (value < 1000) return Long.toString(value); //deal with easy case
-
-        Map.Entry<Long, String> e = suffixes.floorEntry(value);
-        Long divideBy = e.getKey();
-        String suffix = e.getValue();
-
-//        long truncated = value / (divideBy / 10); //the number part of the output times 10
-        int truncated = (int) (((double)value / (divideBy / 10)) + 0.5);
-        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
-        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 
     @Override
@@ -139,7 +113,9 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
 
     @Override
     public void getExtraData() {
-
+        if (!checkPermissionOnDevice()){
+            requestPermision();
+        }
     }
 
     @Override
@@ -150,30 +126,30 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
     @Override
     public void createAdapter() {
         setSupportActionBar(toolbar);
-        progressBar.setVisibility(View.VISIBLE);
-        swipeToLoadLayout.setVisibility(View.GONE);
-        llError.setVisibility(View.GONE);
-        swipeToLoadLayout.setOnRefreshListener(this);
-        swipeToLoadLayout.setOnLoadMoreListener(this);
-        appBar.addOnOffsetChangedListener(this);
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == ORIENTATION_PORTRAIT) {
-            linearLayoutManager = new LinearLayoutManager(this);
-            rvListVideo.setLayoutManager(linearLayoutManager);
-        } else if (orientation == ORIENTATION_LANDSCAPE){
-            gridLayoutManager = new GridLayoutManager(this, 2);
-            rvListVideo.setLayoutManager(gridLayoutManager);
-        }
-        videoAdapter = new VideoAdapter(items, this);
-        rvListVideo.setAdapter(videoAdapter);
-        setOnScrollListener();
-        fab.setOnClickListener(new View.OnClickListener() {
+        setUpViewPager(viewPager);
+        tabs.setupWithViewPager(viewPager);
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View view) {
-                rvListVideo.smoothScrollToPosition(0);
+            public void onTabSelected(TabLayout.Tab tab) {
+                FragmentManager fm = getSupportFragmentManager();
+                Fragment fragment = fm.findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + tab.getPosition());
+                if (fragment instanceof FavouriteFragment){
+                    ((FavouriteFragment) fragment).refreshData();
+                } else if (fragment instanceof HistoryFragment){
+                    ((HistoryFragment) fragment).refreshData();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
-
     }
 
     @Override
@@ -181,99 +157,44 @@ public class MainActivity extends BaseActivity implements MainView, OnRefreshLis
         mainViewPresenter.getChannelInfo(CHANNEL_ID, API_KEY);
     }
 
+    private void setUpViewPager(ViewPager viewPager){
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        allVideoFragment = new AllListVideoFragment();
+        favouriteFragment = new FavouriteFragment();
+        historyFragment = new HistoryFragment();
+
+        viewPagerAdapter.addFragment(allVideoFragment, "All videos");
+        viewPagerAdapter.addFragment(favouriteFragment, "Favourites");
+        viewPagerAdapter.addFragment(historyFragment, "History");
+
+        viewPager.setOffscreenPageLimit(10);
+        viewPager.setAdapter(viewPagerAdapter);
+    }
+
+    private void requestPermision() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.INTERNET
+        }, REQUEST_PERMISSION_CODE);
+    }
+
     @Override
-    public void getListVideoSuccess(ArrayList<Item> items, String nextPageToken, String totalResults) {
-        if (!compositeDisposable.isDisposed()) {
-            progressBar.setVisibility(View.GONE);
-            swipeToLoadLayout.setVisibility(View.VISIBLE);
-            llError.setVisibility(View.GONE);
-            if (loading)
-                loading = false;
-            if (refreshing){
-                this.items.clear();
-                videoAdapter.notifyDataSetChanged();
-                refreshing = false;
-            }
-            for (int i = 0; i < items.size(); i++) {
-                if (items.get(i).getVideoId().getKind().compareTo("youtube#video") != 0) {
-                    items.remove(i);
-                    i--;
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case REQUEST_PERMISSION_CODE:
+            {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
             }
-            this.nextPageToken = nextPageToken;
-            this.items.addAll(items);
-            videoAdapter.notifyDataSetChanged();
-            if (nextPageToken == null)
-                Toast.makeText(getApplicationContext(),"Loaded all videos",Toast.LENGTH_LONG ).show();
+            break;
         }
     }
 
-    @Override
-    public void getListVideoError() {
-        if (!compositeDisposable.isDisposed()){
-            if (refreshing){
-                Toast.makeText(this,"Connection failed! Cannot refresh video!",Toast.LENGTH_LONG ).show();
-            } else if (loading){
-                Toast.makeText(this,"Connection failed! Cannot load video!",Toast.LENGTH_LONG ).show();
-            } else if (nextPageToken == "") {
-                progressBar.setVisibility(View.GONE);
-                llError.setVisibility(View.VISIBLE);
-                fab.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void setOnScrollListener(){
-        rvListVideo.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int firstVisibleItem = 0;
-                if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
-                    firstVisibleItem  = linearLayoutManager.findFirstVisibleItemPosition();
-                } else if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE){
-                    firstVisibleItem = gridLayoutManager.findFirstVisibleItemPosition();
-                }
-                if (dy > 0 || firstVisibleItem == 0){
-                    fab.hide();
-                } else {
-                    fab.show();
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onLoadMore() {
-        swipeToLoadLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeToLoadLayout.setLoadingMore(false);
-                loading = true;
-                if (nextPageToken != null) {
-                    mainViewPresenter.getListVideo(CHANNEL_ID, API_KEY, nextPageToken);
-                } else {
-                    Toast.makeText(getApplicationContext(),"Loaded all videos",Toast.LENGTH_LONG ).show();
-                }
-            }
-        }, 1500);
-    }
-
-    @Override
-    public void onRefresh() {
-        swipeToLoadLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeToLoadLayout.setRefreshing(false);
-                refreshing = true;
-                mainViewPresenter.getListVideo(CHANNEL_ID, API_KEY,"");
-            }
-        }, 1500);
-    }
-
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-        if (!swipeToLoadLayout.isRefreshing())
-            swipeToLoadLayout.setRefreshEnabled(verticalOffset==0);
+    private boolean checkPermissionOnDevice() {
+        int internet_result = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
+        return internet_result == PackageManager.PERMISSION_GRANTED;
     }
 }

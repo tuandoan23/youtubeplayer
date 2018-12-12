@@ -1,19 +1,33 @@
 package com.gamota.youtubeplayer.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.apkfuns.logutils.LogUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.gamota.youtubeplayer.R;
 import com.gamota.youtubeplayer.activity.ContentVideoActivity;
+import com.gamota.youtubeplayer.activity.MainActivity;
+import com.gamota.youtubeplayer.database.DBHelper;
+import com.gamota.youtubeplayer.event.MessageEvent;
+import com.gamota.youtubeplayer.fragments.FavouriteFragment;
+import com.gamota.youtubeplayer.fragments.HistoryFragment;
 import com.gamota.youtubeplayer.model.listvideomodel.Item;
+import com.gamota.youtubeplayer.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -23,10 +37,22 @@ import butterknife.ButterKnife;
 public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     private ArrayList<Item> arrayListVideo;
     private Context context;
+    private Activity activity;
+//    private Fragment fragment;
+    private DBHelper db;
+    private boolean isYoutubeInstalled;
 
-    public VideoAdapter(ArrayList<Item> items, Context context) {
+    public VideoAdapter(ArrayList<Item> items, Context context, Activity activity) {
         arrayListVideo = items;
         this.context = context;
+        this.activity = activity;
+//        this.fragment = fragment;
+//        if (fragment != null) {
+//            isYoutubeInstalled = Utils.isAppInstalled(Utils.packageName, fragment.getActivity().getPackageManager());
+//        } else {
+            isYoutubeInstalled = Utils.isAppInstalled(Utils.packageName, activity.getPackageManager());
+//        }
+        db = new DBHelper(context);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -66,20 +92,56 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String videoId = video.getVideoId().getVideoId();
+                Item item = arrayListVideo.get(position);
+                db.insertRecently(item);
+                String videoId = video.getId().getVideoId();
                 String videoTitle = video.getSnippet().getTitle();
-
                 Intent newIntent = new Intent(context, ContentVideoActivity.class );
                 newIntent.putExtra("videoId", videoId);
                 newIntent.putExtra("videoTitle", videoTitle);
-                context.startActivity(newIntent);
+                newIntent.putExtra("video", item);
+                if (isYoutubeInstalled) {
+                    context.startActivity(newIntent);
+                    EventBus.getDefault().post(new MessageEvent(true));
+                } else {
+                    installSuggestDialog();
+                }
             }
         });
     }
 
+    private void installSuggestDialog(){
+        new MaterialDialog.Builder(context)
+                .title(R.string.title_dialog)
+                .content(R.string.content)
+                .positiveText("Yes")
+                .negativeText("No")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        openPlayStore();
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+
+    }
+
+    private void openPlayStore(){
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + Utils.packageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + Utils.packageName)));
+        }
+    }
+
     @Override
     public int getItemCount() {
-
         return arrayListVideo.size();
     }
 }

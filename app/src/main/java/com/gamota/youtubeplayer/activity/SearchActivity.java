@@ -3,6 +3,7 @@ package com.gamota.youtubeplayer.activity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,7 +51,7 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
     private boolean refreshing = false;
     private boolean loading = false;
     private boolean isNewSearch = false;
-    private String q;
+    private String q = "";
 
     @BindView(R.id.swipeToLoadLayout)
     SwipeToLoadLayout swipeToLoadLayout;
@@ -69,6 +70,9 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
+    @BindView(R.id.llNoVideo)
+    LinearLayoutCompat llNoVideo;
 
     @Override
     public int initLayout() {
@@ -99,7 +103,7 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
             gridLayoutManager = new GridLayoutManager(this, 2);
             rvListVideo.setLayoutManager(gridLayoutManager);
         }
-        videoAdapter = new VideoAdapter(items, this);
+        videoAdapter = new VideoAdapter(items, this, this);
         rvListVideo.setAdapter(videoAdapter);
         setOnScrollListener();
         fab.setOnClickListener(new View.OnClickListener() {
@@ -122,40 +126,46 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 nextPageToken = "";
                 isNewSearch = true;
+                progressBar.setVisibility(View.VISIBLE);
                 (new android.os.Handler()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         String input = charSequence.toString().trim();
                         q = replaceWithPattern(input, "+");
-                        LogUtils.d(q);
-                        if (!q.equals("")) {
-                            searchViewPresenter.searchVideo(CHANNEL_ID, API_KEY, nextPageToken, q);
-//                            progressBar.setVisibility(View.VISIBLE);
-                        } else {
-                            items.clear();
-                            videoAdapter.notifyDataSetChanged();
-                        }
                     }
                 }, 2000);
+                LogUtils.d(q);
+                if (!q.equals("")) {
+                    searchViewPresenter.searchVideo(CHANNEL_ID, API_KEY, nextPageToken, q);
+                } else {
+                    items.clear();
+                    videoAdapter.notifyDataSetChanged();
+                }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                progressBar.setVisibility(View.GONE);
             }
         });
     }
 
     public String replaceWithPattern(String str,String replace){
         Pattern ptn = Pattern.compile("\\s+");
-        Matcher mtch = ptn.matcher(str);
-        return mtch.replaceAll(replace);
+        Matcher matcher = ptn.matcher(str);
+        return matcher.replaceAll(replace);
     }
 
     @Override
     public void searchVideoSuccess(ArrayList<Item> items, String nextPageToken) {
         if (!compositeDisposable.isDisposed()) {
             progressBar.setVisibility(View.GONE);
+            if (items.size() == 0){
+                llNoVideo.setVisibility(View.VISIBLE);
+                swipeToLoadLayout.setVisibility(View.GONE);
+            } else {
+                llNoVideo.setVisibility(View.GONE);
+                swipeToLoadLayout.setVisibility(View.VISIBLE);
+            }
             if (isNewSearch){
                 this.items.clear();
                 videoAdapter.notifyDataSetChanged();
@@ -167,11 +177,11 @@ public class SearchActivity extends BaseActivity implements SearchView, OnLoadMo
                 loading = false;
             if (refreshing){
                 this.items.clear();
-                this.rvListVideo.removeAllViews();
+                videoAdapter.notifyDataSetChanged();
                 refreshing = false;
             }
             for (int i = 0; i < items.size(); i++) {
-                if (items.get(i).getVideoId().getKind().compareTo("youtube#video") != 0) {
+                if (items.get(i).getId().getKind().compareTo("youtube#video") != 0) {
                     items.remove(i);
                     i--;
                 }

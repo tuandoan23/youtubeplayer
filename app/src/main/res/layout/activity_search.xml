@@ -10,8 +10,8 @@
         android:layout_marginRight="15dp"
         android:layout_marginLeft="15dp">
         <android.support.v7.widget.AppCompatImageView
-            android:layout_height="35dp"
-            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:layout_width="30dp"
             android:src="@drawable/ic_search"
             android:layout_centerVertical="true"/>
         <android.support.design.widget.TextInputEditText
@@ -53,6 +53,19 @@
             android:textSize="15dp"
             android:text="@string/error_load"/>
 
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:visibility="gone"
+        android:id="@+id/llNoVideo">
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No video found"
+            android:gravity="center"/>
     </android.support.v7.widget.LinearLayoutCompat>
 
     <!--Swipe to load layout-->

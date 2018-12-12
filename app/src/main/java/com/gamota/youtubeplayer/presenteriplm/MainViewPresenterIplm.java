@@ -25,26 +25,6 @@ public class MainViewPresenterIplm implements MainViewPresenter {
     }
 
     @Override
-    public void getListVideo(String channelId, String apiKey, String pageToken) {
-        Disposable getListVideoWithPageTokenRequest = APIRequests.getListVideo(channelId, apiKey, pageToken)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(jsonElement -> {
-                    LogUtils.d("getListVideo success = " + jsonElement);
-                    Gson gson = new Gson();
-                    ArrayList<Item> items = gson.fromJson(jsonElement.getAsJsonObject().get("items"), new TypeToken<ArrayList<Item>>(){}.getType());
-                    String nextPageToken = gson.fromJson(jsonElement.getAsJsonObject().get("nextPageToken"), new TypeToken<String>(){}.getType());
-                    String totalResults = gson.fromJson(jsonElement.getAsJsonObject().get("pageInfo").getAsJsonObject().get("totalResults"), new TypeToken<String>(){}.getType());
-                    mainView.getListVideoSuccess(items, nextPageToken, totalResults);
-                }, throwable -> {
-                    LogUtils.e("getListVideo error = " + throwable);
-                    throwable.printStackTrace();
-                    mainView.getListVideoError();
-                });
-        compositeDisposable.add(getListVideoWithPageTokenRequest);
-    }
-
-    @Override
     public void getChannelInfo(String channelId, String apiKey) {
         Disposable getChannelInfoRequest = APIRequests.getChannelInfo(channelId, apiKey)
                 .subscribeOn(Schedulers.io())

@@ -37,11 +37,23 @@
                 <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Published on "/>
+                    android:text="Published on "
+                    android:id="@+id/publishedOn"/>
                 <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvPublished"/>
+            </android.support.v7.widget.LinearLayoutCompat>
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+                <android.support.v7.widget.AppCompatImageButton
+                    android:id="@+id/btnFavourite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_favorite_border"/>
             </android.support.v7.widget.LinearLayoutCompat>
             <com.luseen.autolinklibrary.AutoLinkTextView
                 android:layout_width="match_parent"

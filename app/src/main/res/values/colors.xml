@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="default_text_color">#FFF</color>
     <color name="default_color">#3DF0B0</color>
+    <color name="scroll_color">#2de890</color>
     <color name="black">#4D4D4D</color>
     <color name="grey_text">#99adb2</color>
     <color name="video_background">#F5F6F6</color>

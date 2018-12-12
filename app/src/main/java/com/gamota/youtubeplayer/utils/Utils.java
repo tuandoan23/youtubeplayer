@@ -1,5 +1,10 @@
 package com.gamota.youtubeplayer.utils;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.Fragment;
+
 import com.apkfuns.logutils.LogUtils;
 
 import java.text.ParseException;
@@ -13,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class Utils {
     public static final String API_KEY = "AIzaSyBsrViFNAWWmWs0tVJ5z221PfWlsNZa8OQ";
     public static final String CHANNEL_ID = "UCx6iGPCoUxb-7jAInKiql5g";
+    public static final String packageName = "com.google.android.youtube";
     public static final List<Long> times = Arrays.asList(
             TimeUnit.DAYS.toMillis(365),
             TimeUnit.DAYS.toMillis(30),
@@ -50,11 +56,6 @@ public class Utils {
         }
         return null;
     }
-//    public static String dateToString(Date date){
-//        SimpleDateFormat formatToDate = new SimpleDateFormat("MMM dd, yyyy");
-//        String dateTime = formatToDate.format(date);
-//        return dateTime;
-//    }
 
     public static String RFC3339ToDateString(String rfcTime){
         Date date = new Date();
@@ -67,5 +68,15 @@ public class Utils {
         SimpleDateFormat formatToDate = new SimpleDateFormat("MMM dd, yyyy");
         String dateTime = formatToDate.format(date);
         return dateTime;
+    }
+
+    public static boolean isAppInstalled(String packageName, PackageManager packageManager) {
+        Intent mIntent = packageManager.getLaunchIntentForPackage(packageName);
+        if (mIntent != null) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

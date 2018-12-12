@@ -27,62 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <!--<android.support.v7.widget.LinearLayoutCompat-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal"-->
-                <!--android:padding="5dp">-->
-                <!--<android.support.v7.widget.LinearLayoutCompat-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:layout_weight="0.3"-->
-                    <!--android:gravity="center"-->
-                    <!--android:orientation="vertical">-->
-                    <!--<ImageView-->
-                        <!--android:layout_width="40dp"-->
-                        <!--android:layout_height="40dp"-->
-                        <!--android:background="@drawable/ic_like"/>-->
-                    <!--<android.support.v7.widget.AppCompatTextView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/tvCountLike"-->
-                        <!--android:textSize="15dp"/>-->
-                <!--</android.support.v7.widget.LinearLayoutCompat>-->
-                <!--<android.support.v7.widget.LinearLayoutCompat-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:layout_weight="0.3"-->
-                    <!--android:gravity="center"-->
-                    <!--android:orientation="vertical">-->
-                    <!--<ImageView-->
-                        <!--android:layout_width="40dp"-->
-                        <!--android:layout_height="40dp"-->
-                        <!--android:background="@drawable/ic_dislike"/>-->
-                    <!--<android.support.v7.widget.AppCompatTextView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/tvCountDislike"-->
-                        <!--android:textSize="15dp"/>-->
-                <!--</android.support.v7.widget.LinearLayoutCompat>-->
-                <!--<android.support.v7.widget.LinearLayoutCompat-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:layout_weight="0.4"-->
-                    <!--android:gravity="center"-->
-                    <!--android:orientation="vertical">-->
-                    <!--<ImageView-->
-                        <!--android:layout_width="40dp"-->
-                        <!--android:layout_height="40dp"-->
-                        <!--android:background="@drawable/ic_view"/>-->
-                    <!--<android.support.v7.widget.AppCompatTextView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/tvCountView"-->
-                        <!--android:textSize="15dp"/>-->
-                <!--</android.support.v7.widget.LinearLayoutCompat>-->
-            <!--</android.support.v7.widget.LinearLayoutCompat>-->
-
             <!--Published-->
             <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -97,7 +41,9 @@
                     <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Published on "/>
+                        android:text="Published on "
+                        android:id="@+id/publishedOn"
+                        android:visibility="gone"/>
                     <android.support.v7.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -109,9 +55,11 @@
                     android:layout_height="wrap_content"
                     android:gravity="center">
                     <android.support.v7.widget.AppCompatImageButton
+                        android:id="@+id/btnFavourite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/ic_favorite_border"/>
+                        android:background="@drawable/ic_favorite_border"
+                        android:visibility="gone"/>
                 </android.support.v7.widget.LinearLayoutCompat>
             </android.support.v7.widget.LinearLayoutCompat>
 
